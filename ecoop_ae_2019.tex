@@ -7,8 +7,10 @@
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
+\usepackage{booktabs}
 
-\editor{Maria Christakis}{Max Planck Institute for Software Systems\\Kaiserslautern, Germany}{maria@mpi-sws.org}{}%TODO mandatory, please use full name; only 1 editor per \editor macro; first two parameters are mandatory, other parameters can be empty.
+
+\editor{Maria Christakis}{Max Planck Institute for Software Systems\\Saarbrücken and Kaiserslautern, Germany}{maria@mpi-sws.org}{}%TODO mandatory, please use full name; only 1 editor per \editor macro; first two parameters are mandatory, other parameters can be empty.
 
 \editor{Manuel Rigger}{ETH Zurich\\Zurich, Switzerland}{manuel.rigger@inf.ethz.ch}{}
 
@@ -195,8 +197,9 @@ publishing@dagstuhl.de
 \chapter{Preface} %please fill or comment out
 
 % What are the goals?
-The \emph{Artifact Evaluation Committee} (AEC) reviews software artifacts, data sets, and proofs that accompany research papers published at ECOOP.
-The goals of the \emph{Artifact Evaluation} (AE) are to ensure that the reviewed artifacts are reproducible, well-documented, and closely correspond to the associated paper.
+The goals of the \emph{Artifact Evaluation} (AE) are to foster the reproducibility of results by providing authors the possibility to submit an artifact for accepted papers.
+Artifacts include, but are not limited to, software artifacts, data sets, and proofs.
+An \emph{Artifact Evaluation Committee} (AEC) reviews these artifacts and decides upon their acceptance.
 The accepted artifacts are archived in the \emph{Dagstuhl Artifacts Series} (DARTS) published on the \emph{Dagstuhl Research Online Publication Server} (DROPS).
 Each artifact is assigned a \emph{Digital Object Identifier (DOI)} that can be used in future citations.
 
@@ -220,16 +223,39 @@ Maria Christakis and Manuel Rigger\\
 
 \chapter{Artifact Evaluation Process}
 
-The authors of all papers that were accepted to ECOOP 2019 had the option to submit an artifact with their paper, irrespective of the paper category (i.e., Research, Tool Insights, Reproduction Study, Experience Report, Pearl, and Brave New Idea).
-Each artifact was evaluated by three reviewers who were part of the AEC.
+As part of the preparation process, each co-chair selected 12 AEC candidates, which were mostly either PhD students or postdocs.
+Of the 24 AEC candidates, 17 accepted the invitation to serve on the AEC.
+After receiving the notifications, the authors of all accepted ECOOP 2019 papers could submit an artifact with their paper, irrespective of the paper category (i.e., Research, Tool Insights, Reproduction Study, Experience Report, Pearl, and Brave New Idea).
+Each artifact was evaluated by three AEC members, which corresponded to a reviewer load of two to three artifacts.
 The reviewing process consisted of two phases.
-In the ``kick-the-tires'' phase, reviewers briefly verified the basic integrity, documentation, and set-up of the artifacts.
-In case of any issues, reviewers had the opportunity to ask clarifying questions to the authors.
-Authors, in turn, could respond to the reviewers' first feedback, and provide missing documentation or small fixes to the artifacts, to ensure that reviewers were able to fully evaluate the artifacts.
-In the second phase, each reviewer had three weeks to do a comprehensive evaluation of the two to three artifacts they were assigned to review.
-This included assessing whether an artifact fully corresponded to the paper, whether all results presented in the paper could be reproduced, how well the artifact was documented, and how easy it would be to re-use the artifact in future research.
+In the ``kick-the-tires'' phase, reviewers briefly verified the basic integrity of the artifacts to discover any issues that could prevent the evaluation of the artifact (e.g., a corrupted virtual machine image) and to assign a grade for the getting-started guide.
+In case of any issues, reviewers could, as part of a response phase, indicate issues and ask clarifying questions to the authors.
+Authors, in turn, could respond to the reviewers' first feedback, and update their artifacts to address any issues that were raised by the reviewers.
+In the second phase, each reviewer had three weeks to do a comprehensive evaluation of each artifact.
+Reviewers were asked to assess the consistency of the artifact with respect to the paper, the artifact's completeness, documentation, and reusability for future research and to decide on an overall grade.
 The review phase was then followed by a discussion phase, in which artifacts were discussed to converge on either the artifacts' acceptance or rejection.
 Authors that received an acceptance notification were given one week of time to incorporate reviewers' feedback and submit the camera-ready version of their artifacts.
+Table~\ref{aeprocess} summarizes the process and illustrates the timeline.
+\\ 
+\begin{table}[h!]
+	\center{}
+	\caption{Timeline of the AEC process}
+	\label{aeprocess}
+	\begin{tabular}{l l}
+	\toprule
+	AE Phase & Date\\
+	\midrule
+	Submission of the artifacts & Thu 11 April\\
+	Artifact bidding period & Fri 12 April - Mon 15 April\\
+	Kick-the-tires period & Tue 16 April - Sat 20 April\\
+	Kick-the-tires response period & Sun April 21 - Wed April 24\\
+	Main reviewing period & Thu April 25 - Wed May 15\\
+	Discussion period & Thu May 16 - Sun May 19\\
+	Notification & Mon May 20\\
+	Camera-ready version & Mon May 27\\
+	\bottomrule
+	\end{tabular}
+\end{table}
 
 \begin{participants}
 
@@ -332,6 +358,5 @@ Authors that received an acceptance notification were given one week of time to 
 	vanya.yaneva@ed.ac.uk
 
 \end{participants}
-
 
 \end{document}
