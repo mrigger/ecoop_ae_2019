@@ -1,0 +1,189 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+\nolinenumbers %to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact
+endorsed by the Artifact Evaluation Committee is available free of
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+\title{Godot: All the Benefits of Implicit and Explicit Futures (Artifact)}
+
+%\titlerunning{Godot: All the Benefits of Implicit and Explicit Futures}
+
+\author{Kiko Fernandez-Reyes}{Uppsala University, Sweden}{kiko.fernandez@it.uu.se}{https://orcid.org/0000-0001-8654-118X}{}
+
+\author{Dave Clarke}{Storytel, Sweden}{}{https://orcid.org/0000-0002-1970-6607}{}
+
+\author{Ludovic Henrio}{Univ Lyon, EnsL, UCBL, CNRS, Inria,  LIP, France}{ludovic.henrio@ens-lyon.fr}{https://orcid.org/0000-0001-7137-3523}{}
+
+\author{Einar Broch Johnsen}{University of Oslo, Norway}{einarj@ifi.uio.no}{https://orcid.org/0000-0001-5382-3949}{}
+
+\author{Tobias Wrigstad}{Uppsala University, Sweden}{tobias.wrigstad@it.uu.se}{https://orcid.org/0000-0002-4269-5408}{}
+
+\authorrunning{K. Fernandez-Reyes, D. Clarke, L. Henrio, E.~B. Johnsen, T. Wrigstad}
+
+\RelatedArticle{K. Fernandez-Reyes, D. Clarke, L. Henrio, E.~B. Johnsen, T. Wrigstad, ``Godot: All the Benefits of Implicit and Explicit Futures'', in 33rd European Conference on Object-Oriented Programming (ECOOP 2019), LIPIcs, Vol.~134, 2019.\newline \url{https://doi.org/10.4230/LIPIcs.ECOOP.2019.21}}
+
+
+%\EventEditors{Alastair F. Donaldson}
+%\EventNoEds{1}
+%\EventLongTitle{33rd European Conference on Object-Oriented Programming (ECOOP 2019)}
+%\EventShortTitle{ECOOP 2019}
+%\EventAcronym{ECOOP}
+%\EventYear{2019}
+%\EventDate{July 15--19, 2019}
+%\EventLocation{London, United Kingdom}
+%\EventLogo{}
+%\SeriesVolume{134}
+%\ArticleNo{21}
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+\keywords{Futures, Concurrency, Type Systems, Formal Semantics}
+\Copyright{Kiko Fernandez-Reyes, Dave Clarke, Ludovic Henrio, Einar Broch Johnsen, and Tobias Wrigstad}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10010940.10010941.10010949.10010957.10010963</concept_id>
+<concept_desc>Software and its engineering~Concurrency control</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011014</concept_id>
+<concept_desc>Software and its engineering~Concurrent programming languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011024.10011034</concept_id>
+<concept_desc>Software and its engineering~Concurrent programming structures</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Concurrency control}
+\ccsdesc[500]{Software and its engineering~Concurrent programming languages}
+\ccsdesc[500]{Software and its engineering~Concurrent programming structures}
+
+  \maketitle
+
+\begin{abstract}
+This artifact contains an implementation of data-flow futures in terms of
+control-flow futures, in the Scala language. In
+the implementation, we show microbenchmarks that solve the three identified
+problems from the paper:
+
+\begin{enumerate}
+\item The Type Proliferation Problem,
+\item The Fulfilment Observation Problem, and
+\item The Future Proliferation Problem
+\end{enumerate}
+
+There are also detailed instructions on design decisions that differ
+from the formal semantics and restrictions on the limits of how much
+can be encoded in the Scala language. We provide examples,
+e.g., creation of a proxy service using data-flow futures,
+as well as tests that exercise different parts of the type system.
+ \end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+This artifact shows an implementation of the formal semantics of data-flow futures,
+in terms of a library in the Scala programming language. It also show how far one can get
+encoding data-flow futures in terms of control-flow futures, and pinpoints the places that
+require modification of the compiler (or an advanced macro system).
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+The artifact package includes:
+\begin{itemize}
+\item Documentation in files \verb|README.html|, and \verb|README.pdf|.
+\item The Scala implementation of data-flow futures with tests and examples,
+in the Scala language (in folder \verb|godot|).
+\item An assets folder used by the \verb|README.html| file.
+\item A virtual machine \textit{GodotArtefact.ova} that, under \verb|/home/vagrant/Desktop/Godot-Artifact/|, contains
+the same files as mentioned above.\footnote{This has been done for ease of reading, so that a reader does not need to change between host and target machine when reading instructions.}
+%\begin{itemize}
+%  \item The Scala implementation of data-flow futures with tests and examples, in the Scala language.
+%  \item Documentation in HTML, and PDF format.
+%\end{itemize}
+\end{itemize}
+\end{content}
+
+
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+% leave empty if the artifact is only available on the DROPS server.
+% otherwise, provide links to the latest version of the artifact (e.g., on github)
+%In addition, the artifact is also available at:
+%\url{https://to.be.specified}.
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+The artifact disk image works on any platform running Oracle VirtualBox version 6.0.4
+with 5 GiB of free disk space and 2 GiB of free RAM. The artifact also works on any machine
+that has the Scala compiler installed.
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{This artifact is provided under the MIT license.}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling
+% downloaders to check that the file is the expected version and suffered
+% no damage during download.
+\mdsum{d90b8cda99ad792ac9e97f65184087e9}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{2.94 GiB}
+
+\subparagraph*{Acknowledgements.}
+
+We thank the reviewers of the artifact for their helpful comments.
+
+% ARTIFACT: optional appendix
+%\appendix
+%\section{Morbi eros magna}
+%
+%Morbi eros magna, vestibulum non posuere non, porta eu quam. Maecenas vitae orci risus, eget imperdiet mauris. Donec massa mauris, pellentesque vel lobortis eu, molestie ac turpis. Sed condimentum convallis dolor, a dignissim est ultrices eu. Donec consectetur volutpat eros, et ornare dui ultricies id. Vivamus eu augue eget dolor euismod ultrices et sit amet nisi. Vivamus malesuada leo ac leo ullamcorper tempor. Donec justo mi, tempor vitae aliquet non, faucibus eu lacus. Donec dictum gravida neque, non porta turpis imperdiet eget. Curabitur quis euismod ligula \cite{DBLP:books/mk/GrayR93,DBLP:conf/focs/FOCS16,DBLP:conf/focs/HopcroftPV75,DBLP:journals/cacm/Dijkstra68a,DBLP:journals/cacm/Knuth74}.
+%
+
+% ARTIFACT: include here any additional references, if needed...
+
+%%
+%% Bibliography
+%%
+
+%% Either use bibtex (recommended),
+
+%\bibliography{darts-v2019-sample-article}
+
+
+\end{document}

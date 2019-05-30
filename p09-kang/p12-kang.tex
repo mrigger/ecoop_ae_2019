@@ -1,0 +1,192 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+%This is a template for producing DARTS artifact descriptions. 
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+%\nolinenumbers to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+% Commands for artifact descriptions
+% Written by Camil Demetrescu and Erik Ernst
+% April 8, 2014
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Semantic Patches for Java Program Transformation: (Artifact)} 
+
+
+% ARTIFACT: Authors may not be exactly the same as the related scholarly paper, e.g., you may want to include authors who contributed to the preparation of the artifact, but not to the companion paper
+
+\author{Hong Jin Kang}{School of Information Systems, Singapore Management University, Singapore}{hjkang.2018@phdis.smu.edu.sg}{}{}
+\author{Ferdian Thung}{School of Information Systems, Singapore Management University, Singapore}{ferdiant.2013@phdis.smu.edu.sg}{}{}
+\author{Julia Lawall}{Sorbonne Université/Inria/LIP6, France}{Julia.Lawall@lip6.fr,}{}{}
+\author{Gilles Muller}{Sorbonne Université/Inria/LIP6, France}{Gilles.Muller@lip6.fr}{}{}
+\author{Lingxiao Jiang}{School of Information Systems, Singapore Management University, Singapore}{lxjiang@smu.edu.sg}{}{}
+\author{David Lo}{School of Information Systems, Singapore Management University, Singapore}{davidlo@smu.edu.sg}{}{}
+
+%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+
+
+
+
+\authorrunning{H.\,J. Kang et al.}%TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Hong Jin Kang, Ferdian Thung, Julia Lawall, Giles Muller, Lingxiao Jiang, David Lo}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[100]{Software and its engineering $\rightarrow$ Software notations and tools}
+%\ccsdesc[100]{General and reference}%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+
+\keywords{Java, semantic patches, automatic program transformation, }%TODO mandatory; please add comma-separated list of keywords
+
+\RelatedArticle{Placeholder}
+
+
+\acknowledgements{This research was supported by the Singapore National Research Foundation (award number: NRF2016-NRF-ANR003) and the ANR ITrans project.}
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The program transformation tool Coccinelle is designed for making changes that is required in many locations within a software project.
+It has been shown to be useful for C code and has been been adopted for use in the Linux kernel by many developers. 
+Over 6000 commits mentioning the use of Coccinelle have been made in the Linux kernel. 
+
+Our artifact, Coccinelle4J, is an extension to Coccinelle in order for it to apply program transformations to Java source code. 
+This artifact accompanies our experience report "Semantic Patches for Java Program Transformation", in which we show a case study of applying code transformations to upgrade usage of deprecated Android API methods to  replacement API methods. 
+ \end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+
+
+In this document, instructions to set up Coccinelle4J are provided. 
+Furthermore, we provide a selection of semantic patches that can be applied by Coccinelle4J to source code extracted from real-world Java projects. 
+These semantic patches are written in SmPL, a scripting language provided by Coccinelle \cite{padioleau2007smpl}. 
+
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+The artifact package includes:
+\begin{itemize}
+\item a Dockerfile to build the Docker image \texttt{coccinelle4j/coccinelle4j}
+\item a document that provides instructions on how to run Coccinelle4J (ecoop-artifact.pdf)
+\item Coccinelle4J's source code
+\item The examples described in the experience report. For each example, we include
+\begin{itemize} 
+    \item semantic patch specified in SmPL
+    \item some .java source files extracted from real-world Java projects
+    \item output of each semantic patch after applying it with Coccinelle4J
+\end{itemize} 
+
+\end{itemize}
+\end{content}
+
+\begin{getting}
+To minimize setup problems, we also provide a Docker image. 
+
+\subsection{Docker}
+
+A Docker image is similar to a virtual machine image, simplifying the set up of a project's environment. 
+However, unlike a virtual machine, Docker containers are lightweight, sharing the operating system's kernel with the host machine.
+
+We use Docker to run Coccinelle4J in a container
+so that the dependencies of Coccinelle4J can be installed in an environment isolated from the rest of the machine.
+We provide a Docker image \texttt{coccinelle4j/coccinelle4j:ecoop} to easily set up containers that already have Coccinelle4J installed. 
+This image also contains the examples described in the experience report. 
+
+The instructions to install Docker varies between operating systems and 
+can be found on the official Docker document at \url{https://docs.docker.com/install/overview/}.
+
+With Docker installed, the following commands can be executed to create a container based on our Docker image. 
+We have uploaded the image at DockerHub and Docker will automatically fetch the coccinelle4j image from DockerHub. This image is approximately 3.54GB.
+
+\begin{lstlisting}
+docker pull coccinelle4j/coccinelle4j:ecoop
+docker run -it coccinelle4j/coccinelle4j:ecoop /bin/bash
+\end{lstlisting}
+
+The command will start a new container of the coccinelle4j image and run \texttt{bash} on it. 
+On some machines, executing the above commands as root may be required.
+
+\subsection{Make}
+
+If Docker is unavailable, an alternative to set up Coccinelle4J is to build the Coccinelle4J executable using make. 
+OCaml (with a version \textgreater  4.04), git, autoconf, make should be installed first.
+
+\begin{lstlisting}
+git clone https://github.com/kanghj/coccinelle
+cd coccinelle 
+git checkout java
+./autogen && ./configure 
+make && sudo make install
+\end{lstlisting}
+
+\end{getting}
+
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+In general, Coccinelle4J is supported on any Unix-like platform. 
+The Docker image we have provided should work on any platform supporting Docker.
+
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{The artifact is available under GNU GPL version 2.}
+
+\mdsum{58763d6c633d1cc93c2ed3fd76e75960}
+
+\artifactsize{The size of the zip file is 101.1MB. The size of the docker image is about 3.5GB}
+
+
+
+
+
+
+
+% ARTIFACT: include here any additional references, if needed...
+
+%%
+%% Bibliography
+%%
+
+%% Either use bibtex (recommended), 
+
+\bibliography{p12-kang.bib}
+
+%% .. or use the thebibliography environment explicitely
+
+
+
+\end{document}

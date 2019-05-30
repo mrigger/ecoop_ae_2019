@@ -1,0 +1,131 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+%\nolinenumbers to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+\Copyright{Alexi Turcotte, Ellen Arteca, and Gregor Richards}
+
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Reasoning About Foreign Function Interfaces Without Modelling the Foreign Language (Artifact)}
+
+\titlerunning{Reasoning About Foreign Function Interfaces (Artifact)} 
+
+\author{Alexi Turcotte}{Northeastern University, USA}{}{}{}
+
+\author{Ellen Arteca}{Northeastern University, USA}{}{}{}
+
+\author{Gregor Richards}{University of Waterloo, Canada}{}{}{}
+
+\authorrunning{A. Turcotte, E. Arteca, and G. Richards}
+
+\ccsdesc[500]{Software and its engineering~Interoperability}
+\ccsdesc[500]{Software and its engineering~Semantics}
+
+\keywords{Language design, Language interoperation, Formal semantics}
+
+%TODO Please provide information to the related scholarly information
+\RelatedArticle{To be filled in}
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{33rd European Conference on Object-Oriented Programming (ECOOP '19), July 17--18, 2019, Hammersmith, London, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+There are two components to this artifact.
+First, a we provide a mechanization of the formalization in the paper, as well as mechanized proofs of the main results from the paper.
+Second, we provide a full implementation of Poseidon Lua, the language implemented in the paper.
+Instructions for all components of the artifact are included this document.
+
+\end{abstract}
+
+\begin{scope}
+
+This artifact is intended to mimic our semantics and to substantiate our assertions about the semantics, as well as provide a concrete implementation of Poseidon Lua.
+
+First, we provide a Coq mechanization which matches the formal semantics presented in the paper, and we mechanized the theorems from the paper and proved them in Coq.
+The correspondence of the mechanized semantics to the semantics presented in the paper can be found in the artifact itself.
+
+The second aspect of this artifact is an implementation of Poseidon Lua, the language presented in the paper.
+We include the language itself in the artifact, so as to allow users to write and test some programs.
+
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+There are two main components to this artifact.
+First, we provide a Coq mechanization of the semantics and theorems presented in the paper.
+The proof is located in the directory \textbf{/home/reviewer/Desktop/clua}.
+Proof compilation instructions are available in the artifact itself.
+
+Second, we provide an implementation of Poseidon Lua.
+The source code is included in the directory: \textbf{/home/reviewer/Desktop/Poseidon\_Lua}
+The setup to run the language is all done already on this VM; bash is already configured with the necessary environment variables.
+There are numerous pre-written examples in the artifact. 
+
+There is also a README in the Posidon\_Lua directory, which provides a more detailed explanation.
+
+\end{content}
+
+\begin{getting}
+The VM is a Debian VirtualBox.
+Click
+\href{https://drive.google.com/file/d/1NkZr-Dx7RmCuISKGdry1fyTG0lXYovxR/view?usp=sharing}{\textbf{\color{blue}{here}}}
+to download the VM.
+
+The login information is as follows:
+\begin{itemize}
+    \item Username: {\bf reviewer}
+    \item User password: {\bf review} (and user {\bf reviewer} has sudo)
+    \item Root password: {\bf password}
+\end{itemize}
+\end{getting}
+
+\begin{platforms}
+This artifact is a VirtualBox virtual machine, so it can run on any platform.
+As with any virtual machine, it will run faster if there is more RAM available, but this is not necessary.
+Note that the virtual machine is running Debian, so basic familiarity with Linux would help when using the artifact.
+
+The proof compiles on Coq version 8.9.1, which is the version installed on the VM.
+\end{platforms}
+
+\license{The Coq mechanization is licensed under the MIT license.
+
+Poseidon Lua is modifications to Lua and Typed Lua and is under their respective licenses. Both are licensed under the MIT license.
+
+It's also important to note that the rest of the software on the system is under various licenses, as it's a complete OS image, which can be found in /usr/share/doc/*/copyright.}
+
+\mdsum{007f2651fe2c6919e8423123d4bc2db5}
+
+\artifactsize{2.61 GiB (2.8 GB)}
+
+\subparagraph*{Acknowledgements.}
+
+The authors would like to thank Rafi Turas for writing the implementation of these techniques in Poseidon Lua. 
+We’d also like to thank Hugo Musso Gualandi for his valuable discussions/feedback. This work was partially funded by NSERC.
+
+
+\end{document}

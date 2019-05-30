@@ -1,0 +1,16 @@
+\begin{thebibliography}{1}
+
+\bibitem{stievenart2016building}
+Quentin Sti{\'e}venart, Jens Nicolay, Wolfgang De~Meuter, and Coen De~Roover.
+\newblock Building a modular static analysis framework in {Scala} (tool paper).
+\newblock In {\em Proceedings of the 2016 7th ACM SIGPLAN Symposium on Scala},
+  pages 105--109. ACM, 2016.
+
+\bibitem{stievenart2016scala}
+Quentin Sti{\'e}venart, Maarten Vandercammen, Wolfgang De~Meuter, and Coen
+  De~Roover.
+\newblock {Scala-AM}: A modular static analysis framework.
+\newblock In {\em Source Code Analysis and Manipulation (SCAM), 2016 IEEE 16th
+  International Working Conference on}, pages 85--90. IEEE, 2016.
+
+\end{thebibliography}

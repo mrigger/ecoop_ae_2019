@@ -1,0 +1,130 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+%This is a template for producing DARTS artifact descriptions. 
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+%\nolinenumbers to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+% Commands for artifact descriptions
+% Written by Camil Demetrescu and Erik Ernst
+% April 8, 2014
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Garbage-free Abstract Interpretation through Abstract Reference Counting (Artifact)} %TODO Please add
+
+
+\author{Noah Van Es}{Software Languages Lab, Vrije Universiteit Brussel, Belgium}{noah.van.es@vub.be}{}{Funded by a PhD Fellowship of the Research Foundation - Flanders (FWO)}
+
+\author{Quentin Sti\'evenart}{Software Languages Lab, Vrije Universiteit Brussel, Belgium}{quentin.stievenart@vub.be}{}{}
+
+\author{Coen De Roover}{Software Languages Lab, Vrije Universiteit Brussel, Belgium}{coen.de.roover@vub.be}{}{}
+
+\authorrunning{N. Van Es, Q. Sti\'evenart \& C. De Roover}
+
+\Copyright{Noah Van Es, Quentin Sti\'evenart and Coen De Roover}
+
+%from https://dl.acm.org/ccs/ccs_flat.cfm 
+\ccsdesc[500]{Theory of computation~Program analysis}
+
+\keywords{static analysis, abstract interpretation, abstract garbage collection, reference counting}
+
+%TODO Please provide information to the related scholarly information
+%[author note] this is a placeholder reference, since the article has not yet been published
+\RelatedArticle{Noah Van Es, Quentin Sti\'evenart and Coen De Roover, ``Garbage-free Abstract Interpretation through Abstract Reference Counting'', To appear in: Proceedings of the 33th European Conference on Object-Oriented Programming (ECOOP 2019), LIPIcs, Vol.~134}%, pp.~0:1--0:2, 2016.\newline \url{https://doi.org/10.4230/LIPIcs.xxx.xxx.xxx}}
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This artifact is a modified version of Scala-AM, an abstract interpretation framework implemented in Scala. 
+Specifically, we extended Scala-AM with several implementations of machine abstractions that each employ a different approach to abstract garbage collection. 
+These include traditional (tracing-based) approaches to abstract garbage collection, as well as our own novel approach using abstract reference counting. In particular, using the machine abstraction that employs abstract reference counting (with cycle detection) results in a garbage-free abstract interpreter can greatly improve both the precision and performance of the corresponding machine abstraction in the original version of the Scala-AM framework.
+
+We have set up the framework in such a way that one can easily run a variety of experiments to use, evaluate and compare these approaches to abstract garbage collection. This artifact contains documentation on how these experiments can be configured, specifically to reproduce the results presented in the companion paper.
+ \end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+This artifact implements abstract reference counting, our novel approach to abstract garbage collection that is presented in the companion paper, as well as existing tracing-based approaches to abstract garbage collection as an extension to the Scala-AM framework~\cite{stievenart2016building,stievenart2016scala}. 
+While the formalization in the paper uses a minimalistic language $\lambda_{\textsf{ANF}}$, this implementation can be used to analyze a larger subset of the Scheme programming language, and in addition supports multiple configurations for the abstract domain and context-sensitivity of the analysis.
+
+We have set up the framework in such a way that the experiments and results that are reported in the companion paper can easily be reproduced.
+In particular, the framework can directly be used to compare the precision, performance and overhead of analyses that employ different approaches to abstract garbage collection.
+
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+The artifact package includes:
+\begin{itemize}
+\item a manual (\texttt{ecoop2019arc-artifact-manual.pdf}) that briefly describes our implementation  (i.e., a modified version of the \textsc{Scala-AM} framework) and provides detailed instructions on how it can be used, in particular to reproduce the experiments of the companion paper.
+\item the source code of our implementation (\texttt{scala-am-abstractgc.zip}), which can be run locally.
+\item a VM image (\texttt{ecoop2019arc-artifact-vm.ova}) that comes pre-loaded with our implementation and all the dependencies that are required to run it.
+
+\end{itemize}
+\end{content}
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+% leave empty if the artifact is only available on the DROPS server.
+% otherwise, provide links to the latest version of the artifact (e.g., on github)
+The source code of the artifact is also available at:
+\url{https://github.com/noahvanes/scala-am-abstractgc}.
+Moreover, the detailed instructions for reproducing the experiments conducted in the companion paper are accessible at
+\url{https://soft.vub.ac.be/~noahves/ecoop2019arc/ecoop2019arc-artifact-manual.pdf}.
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+The artifact can be installed on any platform running the Java Virtual Machine, version 8 or more recent. 
+The provided VM image (.ova) requires around 7.5 GB of free space on disk, and we recommend using it with at least 4GB of RAM.
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{The artifact is available under the MIT license (\url{https://opensource.org/licenses/MIT}).}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling 
+% downloaders to check that the file is the expected version and suffered 
+% no damage during download.
+\mdsum{8d8ac158bb40ecd3bf4c94727787fa4b}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{3.76 GiB}
+
+\bibliography{p7-VanEs}
+
+\end{document}

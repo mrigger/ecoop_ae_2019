@@ -1,0 +1,274 @@
+\documentclass[a4paper,UKenglish]{lipics-v2019}
+%This is a template for producing LIPIcs articles. 
+%See lipics-manual.pdf for further information.
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+%for section-numbered lemmas etc., use "numberwithinsect"
+%for enabling cleveref support, use "cleveref"
+%for enabling cleveref support, use "autoref"
+
+\bibliographystyle{plainurl}
+
+\title{NumLin: Linear Types for Linear Algebra (Artifact)}
+
+\author{Dhruv C.~Makwana}{Unaffiliated \url{dhruvmakwana.com} }{dcm41@cam.ac.uk}{https://orcid.org/0000-0001-7220-4991}{}
+
+\author{Neelakantan R.~Krishnaswami}{Department of Computer Science and Technology, University of Cambridge, United Kingdom}{nk480@cl.cam.ac.uk}{https://orcid.org/0000-0003-2838-5865}{}
+
+\authorrunning{D.\,C. Makwana and N.\,R. Krishnaswami}
+
+\Copyright{Dhruv C. Makwana and Neelakantan R. Krishnaswami}% LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[300]{Theory of computation~Program specifications}
+
+\keywords{numerical, linear, algebra, types, permissions, OCaml}
+
+\supplement{\url{https://github.com/dc-mak/NumLin}}
+
+\acknowledgements{We would like to thank Stephen Dolan for his advice and
+support with the implementation and evaluation of NumLin. We would also like to
+thank the (anonymous) reviewers for their feedback and suggestions.}
+
+\relatedversion{A full version of the paper is available at
+\url{https://github.com/dc-mak/NumLin/blob/master/write-up/paper.pdf}.}
+
+\nolinenumbers %uncomment to disable line numbering
+
+%\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
+
+%Editor-only macros:: begin (do not touch as author)%
+\EventEditors{Alastair F. Donaldson}
+\EventNoEds{1}
+\EventLongTitle{33rd European Conference on Object-Oriented Programming (ECOOP 2019)}
+\EventShortTitle{ECOOP 2019}
+\EventAcronym{ECOOP}
+\EventYear{2019}
+\EventDate{July 15--19, 2019}
+\EventLocation{London, United Kingdom}
+\EventLogo{}
+\SeriesVolume{134}
+\ArticleNo{9}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\begin{document}
+
+\maketitle%
+
+\hypertarget{exploring}{%
+\section{Exploring}\label{exploring}}
+
+\begin{enumerate}
+\item
+  Login (password: osboxes.org), open up a terminal (Activites
+  > Terminal), \texttt{cd\ NumLin}.
+\item
+  Run the tests: \texttt{dune\ runtest}. Not much should happen because
+  all the tests should pass. If you wish to see a test fail, then you
+  may change/delete any text inside a
+  \texttt{{[}\%expect\ \{\textbar{}\ ..\ \textbar{}\}{]}} block and then
+  \texttt{dune\ runtest} will show you the difference between the
+  expected output and the actual output.
+\item
+  Run the benchmarks:
+  \texttt{\_build/default/bin/benchmark.exe\ -\/-start\ 1\ -\/-limit\ 5\ -\/-alg\ lin\_reg\ -\/-micro-quota\ 10\ -\/-macro-runs\ 1}.
+  You may also provide the \texttt{-help} flag for details about the
+  options.
+  \begin{itemize}
+  \item
+    \texttt{-\/-start} and \texttt{-\/-limit} control the size of square
+    matrices from $5 \times 5$ to $5^5 \times 5^5$.
+  \item
+    \texttt{-\/-alg} chooses the example to run (kalman, l1\_norm\_min,
+    lin\_reg).
+  \item
+      \texttt{-\/-micro-quota} controls the duration of smaller benchmarks (limit $\leq$ 3).
+  \item
+    \texttt{-\/-macro-runs} controls the number of measurements
+    made for each implementation.
+  \end{itemize}
+\item
+  Run the repl: \texttt{\_build/default/bin/repl.exe}. Type in a NumLin
+  expression, terminated by \texttt{;;} to see its AST and translation
+  to OCaml. Ctrl-D to exit the application.
+\item
+  Run the transpiler:
+  \texttt{\_build/default/bin/transpile.exe\ -i\ <input-file>\ -o\ <output-file>}.
+  Transpile a file containing a NumLin expression, terminated by
+  \texttt{;;}, into an OCaml module.
+\item
+  Explore the code itself:
+  \texttt{pushd\ src\ \&\&\ dune\ utop\ \&\&\ popd}. This will open up
+  an OCaml REPL with the library in \texttt{src} loaded in under the
+  module name \texttt{Numlin}.
+\end{enumerate}
+
+\hypertarget{command-reference}{%
+\section{Command Reference}\label{command-reference}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Command & Meaning\tabularnewline
+\midrule
+\endhead
+\texttt{dune\ build\ src/numlin.a} & Build the library (everything
+inside \texttt{src}).\tabularnewline
+\texttt{cd\ src\ \&\&\ dune\ utop} & As above + launches UTop with
+library loaded.\tabularnewline
+\texttt{dune\ build\ test/test.exe} & Build library \&
+tests.\tabularnewline
+\texttt{dune\ runtest} & Build library \& tests \emph{and} run all
+tests.\tabularnewline
+\texttt{dune\ build\ bin/*.exe} & Build
+\{repl,benchmark,transpile\}.\tabularnewline
+\texttt{dune\ clean} & Delete \texttt{\_build} directory of build
+artifacts.\tabularnewline
+\texttt{\_build/default/bin/*.exe} & Launch
+\{repl,transpile,benchmark\}.exe\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{structure}{%
+\section{Structure}\label{structure}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Directory & Purpose\tabularnewline
+\midrule
+\endhead
+\texttt{src} & Library being developed.\tabularnewline
+\texttt{test} & Tests for the library.\tabularnewline
+\texttt{bin} & For executables, like the REPL.\tabularnewline
+\texttt{old} & First attempt at implementation.\tabularnewline
+\texttt{write-up} & My dissertation on all of this.\tabularnewline
+\bottomrule
+\end{longtable}
+
+To understand this project, consider what happens when you use the REPL:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  An input string is taken and fed to \texttt{Eval.eval}.
+\item
+  \texttt{bin/eval.ml} in turn uses \texttt{src/parse.ml}: this file
+  needs four things to run a parser over an input: a lexical-token
+  buffer, a way to handle a successful parse, a way to handle an error,
+  and optionally, a way to handle a request for a new lexical-buffer.
+  How these are implemented in \texttt{bin/eval.ml} is not relevant for
+  the big-picture.
+\item
+  \texttt{src/parse.ml} uses \texttt{lexer.mll} and \texttt{parser.mly}
+  to drive an incremental parser. Making it incremental allows for using
+  \texttt{parser.messages} and \texttt{error\_msg.ml} for better
+  error-messages. Upon success, \texttt{src/parse.ml} returns a value of
+  type \texttt{Ast.exp}, upon failure, a position, to be used by handle
+  in showing a useful error-message.
+\item
+  \texttt{src/ast.ml} defines fractional-capabilities, linear types and
+  expressions, as well as pretty-printing code-generation. The code is
+  generated on the assumption that it comes after either the contents of
+  the file \texttt{template.ml} or an \texttt{open\ Numlin.Template}
+  statement.
+  \begin{itemize}
+  \item
+    \texttt{template.ml{[}i{]}} is a full implementation of NumLin's
+    primitives in OCaml.
+  \end{itemize}
+\item
+  Given a value of type \texttt{Ast.exp}, the \texttt{accept} function
+  in \texttt{bin/eval.ml} passes it to \texttt{check\_expr} in
+  \texttt{src/checker.ml}.
+\item
+  \texttt{src/checker.ml} checks types, linearity and scoping. It uses
+  operations defined in \texttt{src/check\_monad.ml} to implement typing
+  rules.
+  \begin{itemize}
+  \item
+    \texttt{check\_monad.ml{[}i{]}} hides implementation details of
+    functions used in the type-checker as well as constraining how those
+    functions are used. For example, \texttt{wf\_lin} is how the
+    type-checker ensures fractional-capabilities and linear-types are
+    ``well-formed'' with respect to the environment. Similarly,
+    \texttt{not\_used} is a proof that a variable is not used: it is
+    returned only by \texttt{lookup} and accepted only by
+    \texttt{use\_var}: you cannot extract the type of a linear variable
+    unless you mark it as used first.
+  \end{itemize}
+\item
+  Regardless of whether checking is successful or not, \texttt{accept}
+  in \texttt{bin/eval.ml} does two things (1) output OCaml code
+  representing a translation of the expression entered (2) output the
+  full AST in s-expression form. If the checking is successful, then the
+  type is output, otherwise an error.
+\item
+  Similarly, \texttt{bin/transpile.ml} reads an entire file as input
+  rather than an interactive, line-by-line entry. It acts as a
+  thin-wrapper around \texttt{src/transpile.ml} which can take either
+  \texttt{in\_channel}/\texttt{out\_channel} pairs or file names to
+  translate DSL expressions to OCaml.
+\end{enumerate}
+
+\hypertarget{library}{%
+\subsection{Library}\label{library}}
+
+At its core, it's just an Abstract Syntax Tree and a Checker. I use
+\href{https://github.com/janestreet/ppx_let}{ppx\_let} and try and keep
+everything pure functional, returning
+\texttt{\textquotesingle{}a\ Or\_error.t} for informative error
+messages.
+
+\texttt{State\_or\_error} is a Error-monad with state as the
+result-type. \texttt{Check\_monad} uses it to provide very constrained
+``mutation'' interface to the checker, and attempts to use OCaml's type
+system to prevent invalid use of the interfaces (see
+\texttt{Check\_monad.use\_var}).
+
+\texttt{src/ast.ml{[}i{]}} also contains the
+pretty-printing/code-generation for the AST. They assume/use the
+functions provided by \texttt{src/template.ml}.
+
+Parsing and lexing are available for convenience in writing expressions
+(see the REPL for details).
+
+\hypertarget{benchmarking}{%
+\subsection{Benchmarking}\label{benchmarking}}
+
+Something like
+\texttt{\_build/default/bin/benchmark.exe\ -\/-start\ 1\ -\/-limit\ 4\ -\/-alg\ kalman\ -\/-micro-quota\ 10\ -\/-macro-runs\ 10}
+should be a good place to get started. It will take at least \emph{150s}
+for just the micro-benchmarks, and more for the macro-benchmarks. If you
+have time \texttt{-\/-micro-quota\ 20} I've found to be more than
+enough; you should increase \texttt{-\/-macro-runs} carefully. Please do
+check that \emph{R2}, when given, is usally 1 or very close (0.95 or
+above), otherwise it means something not quite right with this set of
+measurements/regressions performed by Core\_bench.
+
+For profiling, I advise \texttt{-\/-no-analyse} to skip data
+analysis/printing and just run the algorithm. Something like
+\texttt{-\/-alg\ none\ -\/-micro-quota\ 1\ -\/-macro-runs\ 1} for equal
+\texttt{-\/-start} and \texttt{-\/-limit} will help in getting a
+baseline without running any of the tests themselves.
+
+Full usage is given by \texttt{-help}. The benchmarks loads (or
+generates if they don't exist) matrices for a size depending on
+\texttt{-\/-start} and \texttt{-\/-limit}. For \emph{n=5}, \emph{k=3},
+matrix sizes grow exponentially from \emph{nstart} to \emph{nlimit}
+(inclusive) with \emph{k = 3ni-1}.
+
+For small exponents (i $\leq$ 3), Jane Street's Core\_bench runs the
+benchmark for \texttt{-\/-micro-quota} seconds each (so for
+\texttt{-\/-alg\ all} and \texttt{-\/-micro-quota\ 10} it will take
+\emph{10 × 5 algorithms = 50 s + data processing time}) to run.
+
+For bigger exponents, it's just a bunch of repeated iterations, the
+number of which is specified by \texttt{-\/-macro-runs}. Be aware that
+for limits more than 4, this can be pretty slow.
+
+There are (currently) 4 implementations of a Kalman filter:
+Python/NumPy, OCaml/Owl, OCaml/NumLin, C/CBLAS-LAPACKE. There are also 3
+implementation each of L1-norm minimisation and ``linear regression'' in
+Python/NumPy, OCaml/Owl, and OCaml/NumLin.
+
+\end{document}

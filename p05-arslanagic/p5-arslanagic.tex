@@ -1,0 +1,174 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+
+ 
+\usepackage{microtype}
+
+\nolinenumbers 
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{proof}
+\usepackage{xspace}
+\usepackage[table]{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{listings}
+
+
+\bibliographystyle{plainurl}
+
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\newcommand{\HO}{\ensuremath{\mathsf{HO}}\xspace}
+\newcommand{\secref}[1]{\S\,\ref{#1}}
+\newcommand{\misty}{\textsf{MISTY}\xspace}
+\title{Minimal Session Types (Artifact)} 
+% Author macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+\titlerunning{Minimal Session Types (Artifact)} 
+
+
+\author{Alen Arslanagi\'{c}}{University of Groningen, The Netherlands}{}{https://orcid.org/0000-0002-0292-478X}{}
+\author{Jorge A. P\'{e}rez}{University of Groningen, The Netherlands}{}{https://orcid.org/0000-0002-1452-6180}{}
+\author{Erik Voogd}{University of Groningen, The Netherlands}{}{}{}
+
+\authorrunning{A.\,Arslanagi\'{c}, J.\,A.\,P\'{e}rez, and E.\,Voogd}
+
+\Copyright{Alen \,Arslanagi\'{c}, Jorge\,A.\,P\'{e}rez, and Erik\,Voogd}
+
+\ccsdesc[100]{Theory of computation~Type structures}
+\ccsdesc[500]{Theory of computation~Process calculi}
+\ccsdesc[100]{Software and its engineering~Concurrent programming structures}
+\ccsdesc[100]{Software and its engineering~Message passing}
+%Theory of computation ? Type structures, 
+%Theory of com- putation ? Process calculi, 
+%Software and its engineering ? Concurrent programming structures, 
+%Software and its engineering ? Message passing
+
+
+\keywords{Session types, process calculi, $\pi$-calculus.}%mandatory
+
+\RelatedArticle{}
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{33rd European Conference on Object-Oriented Programming (ECOOP 2019), July 15--19, 2019, London, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\funding{Work partially supported by the Netherlands Organization for Scientific Research (NWO) under the VIDI Project No.\ 016.Vidi.189.046 (Unifying Correctness for Communicating Software).}
+
+\acknowledgements{
+We are grateful to the anonymous artifact reviewers for their suggestions. 
+P\'{e}rez is also 
+with CWI, Amsterdam and the NOVA Laboratory for Computer Science and Informatics (FCT grant NOVA LINCS PEst/UID/CEC/04516/2013), Universidade Nova de Lisboa, Portugal.}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This artifact contains \misty, a tool that decomposes message-passing programs with session types into programs typable with the \emph{minimal} session types we introduce in our ECOOP paper.
+\misty incorporates a domain-specific language for message-passing concurrency based on a higher-order process calculus with {session types}.
+Given a source program in this language, \misty follows the results in our ECOOP paper  
+to produce \LaTeX\xspace code for its corresponding decomposition.  
+To demonstrate the tight connection between source and decomposed programs,
+\misty also allows users to simulate their corresponding reductions.
+\end{abstract}
+
+\begin{scope}
+The artifact concerns \misty, a tool that demonstrates the decomposition of message-passing programs with (standard) session types into programs typable with
+the \emph{minimal} session types that we define and study in our ECOOP paper. 
+We have used \misty to automatically develop the several examples included in our paper. 
+In our view, \misty serves as significant evidence that the conceptual benefits of relying on minimal session types, thoroughly developed in our ECOOP paper, have also concrete practical applications. 
+
+The syntax of \misty programs closely follows Cloud Haskell
+\cite{Epstein:2011:THC:2096148.2034690}. Indeed, \misty is implemented as a deeply embedded domain-specific language in 
+Haskell. 
+For a given \misty program, the tool generates corresponding \LaTeX\xspace code that renders the following: 
+\begin{enumerate}
+		\item The program's representation as an \HO process with \emph{standard} session types;
+		\item The reduction chain of the \HO process obtained in (1);
+		\item The decomposition of the \HO process obtained in (1) into an \HO process with \emph{minimal} session types;
+		\item The reduction chain of the \HO process obtained in (3).
+\end{enumerate}
+\end{scope}
+
+
+\begin{content}
+The source code of \misty has been packaged using \texttt{stack}.
+At the top level there is a \misty module that implements main \texttt{misty} and \texttt{mistymu} functions; given an input program, these functions generate the corresponding \LaTeX\xspace code. 
+
+This module depends on the following submodules: 
+\begin{itemize}
+	\item \texttt{Misty.Channel} implements channel names.
+	\item \texttt{Misty.Process} implements the source language for \misty as well as representations of monadic and polyadic \HO languages (target language of the decomposition).
+	\item \texttt{Misty.Semantics} implements the operational semantics of the languages defined in \texttt{Process}.
+	\item \texttt{Misty.Types} implements session types for input and intermediate languages as well as \emph{minimal} session types for the target language.
+	\item \texttt{Misty.Decomposition} implements the decomposition function for finite processes, divided into a \emph{core fragment} and its extension with \emph{selection and branching}.	
+	\item \texttt{Misty.DecompositionMu} implements the extension of the decomposition function that supports \emph{tail-recursive session types}.
+	\item \texttt{Misty.DecompositionBase} contains utilities common to both decomposition functions.
+\end{itemize}
+
+The package also includes:
+\begin{itemize}
+\item Example \misty programs in \texttt{../examples}.
+\item Already generated examples, consisting of \LaTeX\xspace code and PDF renderings.
+\end{itemize}
+The documentation is available in the \misty package. 
+\end{content}
+
+\begin{getting}
+
+The latest version of our code is available on the repository: 
+\begin{center}
+\url{https://gitlab.com/aalen9/misty.git}
+\end{center}
+To set up the environment: 
+\begin{itemize}
+\item Install \texttt{stack} (\url{https://docs.haskellstack.org/en/stable/README/})
+\item Clone the repository at \url{https://gitlab.com/aalen9/misty.git}
+\end{itemize}
+
+\end{getting}
+
+\license{
+\begin{itemize}
+\item \misty is released under BSD 2-clause License (\url{https://opensource.org/licenses/ BSD-2-Clause}).
+\end{itemize}
+}
+
+\begin{platforms}
+The artifact has been tested 
+on \texttt{macOs 10.14.3} platform, using:
+\begin{itemize}
+\item GHC version 8.6.4 
+\item \texttt{stack} version 1.9.3 
+\item \texttt{pdfLatex} \LaTeX engine for generating 
+PDFs. 
+\end{itemize} 
+\end{platforms}
+
+\mdsum{381ff0f71f30f9711a7afd9dd210bb04}
+
+
+\artifactsize{3 MiB}
+
+\bibliography{p5-arslanagic}
+
+
+\end{document}

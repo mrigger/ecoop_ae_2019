@@ -1,0 +1,190 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+\usepackage{microtype}
+\usepackage{todonotes}
+\usepackage{enumitem}
+\usepackage{listings}
+
+\newsavebox{\mybox}
+
+\bibliographystyle{plainurl}
+
+% Commands for artifact descriptions
+% Written by Camil Demetrescu and Erik Ernst
+% April 8, 2014
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact
+endorsed by the Artifact Evaluation Committee is available free of
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Lifestate: Event-Driven Protocols and Callback Control Flow (Artifact)}
+
+
+\author{Shawn Meier}{University of Colorado Boulder, USA\and \url{https://plv.colorado.edu/shawn/} }{shawn.meier@colorado.edu}{https://orcid.org/0000-0002-1349-4316}{}
+\author{Sergio Mover}{École Polytechnique, France\and \url{http://www.sergiomover.eu/}}{sergio.mover@lix.polytechnique.fr}{https://orcid.org/0000-0003-1029-9547}{}
+\author{Bor-Yuh Evan Chang}{University of Colorado Boulder, USA\and \url{https://www.cs.colorado.edu/~bec/} }{evan.chang@colorado.edu}{https://orcid.org/0000-0002-1954-0774}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+%\author{Joan R. Public\footnote{Optional footnote, e.g. to mark corresponding author}}{Department of Informatics, Dummy College, [optional: Address], Country}{joanrpublic@dummycollege.org}{[orcid]}{[funding]}
+
+\authorrunning{S. Meier, S. Mover, and B.-Y.\,E. Chang}%TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Shawn Meier, Sergio Mover, and Bor-Yuh Evan Chang}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[100]{Software and its engineering~Software verification}
+%\ccsdesc[100]{General and reference}%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
+
+\keywords{domain-specific languages, event-based programming, language implementation, new programming models or languages, object-oriented programming, semantics, testing, verification - automated}%TODO mandatory; please add comma-separated list of keywords
+
+%TODO Please provide information to the related scholarly information
+\RelatedArticle{Shawn Meier, Sergio Mover, and Bor-Yuh Evan Chang, ``Lifestate: Event-Driven Protocols and Callback Control Flow'', in Proceedings of the European Conference On Object Oriented Programming languages (ECOOP 2019), LIPIcs, Vol.~0, pp.~0:1--0:2, 2019.\newline \url{https://doi.org/10.4230/LIPIcs.xxx.xxx.xxx}}
+
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\lst@CCPutMacro\lst@ProcessOther {"2D}{\lst@ttfamily{-{}}{-{}}}
+\@empty\z@\@empty
+\makeatother
+
+\RequirePackage{relsize}
+\RequirePackage{xspace}
+%%% Syntax
+\lstdefinelanguage{Enable}{
+  morekeywords={let,in,if,then,else,new,bind,invoke,enable,disable,allow,disallow,fun,true,false,thk,event,callback,callin,force},
+  literate={skip}{{$\bullet$}}1
+}
+
+\newcommand{\cbstyle}{\colordullx{0}\slshape}
+\newcommand{\cistyle}{\colordullx{4}}
+\newcommand{\fwktystyle}{\colordullx{1}\itshape\relsize{-1}}
+\newcommand{\evtstyle}{\normalfont\ttfamily\scshape}
+\lstdefinelanguage{exthighlighting}[]{highlighting}{%
+  moredelim=**[is][\cbstyle]{|cb:}{|},
+  moredelim=**[is][\cistyle]{|ci:}{|},
+  moredelim=**[is][\fwktystyle]{|fwkty:}{|},
+  moredelim=*[is][\evtstyle]{|evt:}{|}
+}
+\newcommand{\lifecyclepp}{\ensuremath{\text{lifecycle\raisebox{0.25ex}{\relsize{-1}+\!+}}}\xspace}
+\newcommand{\codex}[2]{\ensuremath{\text{\lstinline[#1]~#2~}}}
+%\newcommand{\codej}[1]{\codex{language=Java,alsolanguage=exthighlighting}{#1}}
+\newcommand{\codej}[1]{\codex{language=Java}{#1}} %TODO fixme
+\newcommand{\rrule}[1]{\ensuremath{\parstyle{s_{#1}}}}
+\newcommand{\renable}{\ensuremath{\rightarrow}}
+\newcommand{\rdisable}{\ensuremath{\nrightarrow}}
+\newcommand{\rregexp}[1]{\ensuremath{\parstyle{r_{#1}}}}
+\newcommand{\grregexp}[1]{\ensuremath{r_{#1}}}
+
+\newcommand{\emptyword}{\ensuremath{\epsilon}}
+\newcommand{\falseword}{\ensuremath{\emptyset}}
+\newcommand{\rseq}{\ensuremath{;}}
+\newcommand{\rstar}{\ensuremath{^{*}}}
+\newcommand{\rand}{\ensuremath{\cap}}
+\newcommand{\ror}{\ensuremath{+}}
+\newcommand{\rnot}{\ensuremath{\neg}}
+
+
+
+\begin{document}
+%\input{macros}
+\maketitle
+
+\begin{abstract}
+Developing interactive applications (apps) against event-driven software frameworks such as Android is notoriously difficult.
+To create apps that behave as expected, developers must follow complex and often implicit \emph{asynchronous programming protocols}.
+Such protocols intertwine the proper registering of callbacks to receive control from the framework with appropriate application-programming interface (API) calls that in turn affect the set of possible future callbacks.
+An app violates
+the protocol
+when, for example, it calls a particular API method in a state of the framework where such a call is invalid.
+What makes
+automated reasoning hard in this domain is
+largely what makes programming apps against such frameworks hard: the
+specification of the protocol is unclear, and the control flow is complex, asynchronous, and higher-order.
+In this paper, we tackle the problem of specifying and modeling
+event-driven application-programming protocols.
+In particular, we formalize a core meta-model that captures the
+dialogue between event-driven frameworks and application callbacks.
+Based on this
+meta-model, we define a language called \emph{lifestate} that permits precise and formal descriptions of 
+application-programming protocols and the callback control flow
+imposed by the event-driven framework.
+Lifestate unifies modeling what app callbacks can expect of the framework with specifying rules the app must respect when calling into the framework. 
+In this way, we effectively combine lifecycle constraints and typestate rules.
+To evaluate the effectiveness of lifestate modeling,
+we provide a dynamic verification algorithm that takes as input a trace of execution of an app and a lifestate protocol specification to either produce a trace witnessing a protocol violation or a proof that no such trace is realizable.
+\end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+The accompanying scholarly paper~\cite{vervita-paper} argues for a re-examination of the process of modeling callback control flow. Through this process, we identified some essential aspects of event-driven frameworks to arrive at a language called \emph{lifestates} that simultaneously captures callback control flow and event-driven application-programming protocols at the app-framework interface. This re-examination leads to both a methodology for empirically validating such event-driven framework models against corpora of app-framework interaction traces and a technique for verifying trace rearrangements are absent of protocol violations. Overall, we evaluate empirically the capacity of lifestates to model a real, complex event-driven framework like Android and the necessity of validating such models (cf. Section~6 of the accompanying paper~\cite{vervita-paper}).
+This artifact includes the software and inputs that we used in the evaluation section of our paper.
+
+\end{scope}
+
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+The artifact package includes a virtual machine image (username \texttt{verivita} and password \texttt{verivita}) with the software, trace corpora, and callback control-flow models described above, along with the measurements produced to respond to the research questions described above.
+\end{content}
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+% leave empty if the artifact is only available on the DROPS server.
+% otherwise, provide links to the latest version of the artifact (e.g., on github)
+In addition, the artifact is also available at:
+\url{https://drive.google.com/open?id=15DSRQCvuxgxhYKcA7L3ah9WlQNE_t4Wr}
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+We provide the artifact as an Ubuntu virtual machine created with Virtual Box.
+We suggest using a machine with at least 16GB of RAM and dual core CPU.
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{Different parts of the artifact are under different licenses. Verivita, TraceRunner, and the trace data are under the Apache 2.0 license.  Benchtools is licensed under GPL V3.  NuXmV is under a proprietary license (see \url{https://es-static.fbk.eu/tools/nuxmv/downloads/LICENSE.txt}).}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling
+% downloaders to check that the file is the expected version and suffered
+% no damage during download.
+\mdsum{verivita.ova : d0ebbd97cb03e592b4d73ba57a633279}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{14 GB}
+
+%\subparagraph*{Acknowledgements.}
+%
+%I want to thank \dots
+
+% ARTIFACT: optional appendix
+\appendix
+
+\lstset{language=bash}
+\section{Running the Virtual Machine}
+We suggest using VirtualBox which can be downloaded from \url{https://www.virtualbox.org/wiki/Downloads}.
+The virtual machine image may be downloaded from \url{https://drive.google.com/open?id=15DSRQCvuxgxhYKcA7L3ah9WlQNE_t4Wr}.
+Import the machine by clicking \url{file} $\rightarrow$ \url{import} \url{appliance} and select \url{verivita.ovf}.
+
+
+\section{Extended Artifact Description}
+An extended description of the artifact and how to reproduce results may be found on the desktop of the virtual machine in the file \url{artifact_description_extended.pdf}.
+\bibliography{15-meier}
+\end{document}

@@ -1,0 +1,680 @@
+% flatex input: [00.tex]
+\def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
+
+\documentclass[a4paper,UKenglish,cleveref, autoref]{darts-v2019}
+\usepackage{\jobname}
+%This is a template for producing LIPIcs articles.
+%See lipics-manual.pdf for further information.
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+%for section-numbered lemmas etc., use "numberwithinsect"
+%for enabling cleveref support, use "cleveref"
+%for enabling cleveref support, use "autoref"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+% flatex input end: [00.bbl]
+%FLATEX-REM:\bibliographystyle{plainurl}% the mandatory bibstyle
+
+\title{Fling---A Fluent API Generator}
+
+% ARTIFACT: Authors may not be exactly the same as the related scholarly paper, e.g., you may want to include authors who contributed to the preparation of the artifact, but not to the companion paper
+
+\author{Ori Roth}{Technion I.I.T Computer Science Dept., Haifa, Israel}{ori.rothh@gmail.com}{}{Technion I.I.T}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+
+\author{Yossi Gil}{Technion I.I.T Computer Science Dept., Haifa, Israel}{yogi@cs.technion.ac.il}{}{Technion I.I.T}
+
+\authorrunning{O. Roth and Y. Gil}%TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Ori Roth and Yossi Gil}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc[100]{General and reference~General literature}
+\ccsdesc[100]{General and reference}%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+
+\keywords{Fluent API, compilation, generics, code generation}
+
+\RelatedArticle{John Q. Open and Joan R. Access, ``A very nice paper'', in Proceedings of the 30th Conference on Very Important Topics (CVIT 2016), LIPIcs, Vol.~0, pp.~0:1--0:2, 2016.\newline \url{https://doi.org/10.4230/LIPIcs.xxx.xxx.xxx}}
+
+%\acknowledgements{I want to thank \dots}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+	% flatex input: [abstract.tex]
+The first general and practical solution of the fluent API problem is
+presented. We give an algorithm that given a deterministic context free
+language (equivalently,~$\text{LR}(k)$,~$k≥0$ language) encodes it in an
+unbounded parametric polymorphism type system employing only a polynomial
+number of types. The theoretical result is employed in an actual tool
+\Fling---a fluent API compiler-compiler in the style of YACC, tailored for
+embedding DSLs in \NonCitingUse{Java}.
+
+% flatex input end: [abstract.tex]
+
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+	% flatex input: [scope.tex]
+Fluent APIs are often used a implement a domain specific language (DSL). In
+\cref{lst:re} we see an example of fluent API that specifies
+a regular expression.
+\begin{excerpt}[language=java,label={lst:re},caption={%
+    Fluent API specification of the regular expression
+~$
+    (ab?)^*\,|\,~$
+~$
+    \left([0-9][0-9]⁺\right)
+~$
+    }
+]
+re().// this starts the fluent API chain here
+noneOrMore(exactly("a").and().option(exactly("b"))).//
+or().oneOrMore(anyDigit()).//
+$(); // End the chain
+\end{excerpt}
+In the main ECOOP'19 article, we argued that an efficient and modestly sized
+fluent API can be generated for any \emph{deterministic language} (languages
+accepted by a deterministic pushdown automaton), or equivalently, all LR($k$)
+languages. Our theoretical result
+was supported by a proof and an implementation. Here we describe
+on the implementation and its derivatives; we contribute the code
+behind the algorithm, and demonstrate that the result is not merely
+theoretical, but can applied for embedding a DSL as a fluent API
+in programming languages with only rudimentary support of genericity.
+
+\Fling (\textbf F\textbf L uent \textbf Interfaces \textbf Generator) is a
+fluent API compiler-compiler (in the venue of YACC) that does this and more.
+It accepts a specification of a formal language, e.g., the language of
+regular expressions,
+and compiles this definition into a set of classes and methods that
+realize a fluent API for the given language. The formal language may specified in one of two ways:
+\begin{enumerate}
+  \item \emph{DPDA} (\textbf Deterministic \textbf Push\textbf Down \textbf
+    Automaton) including a definition of the set of stack symbols, automaton
+    symbols, start symbol, transition function, and accepting symbols.
+
+    Consider for example, a DPDA for the language~$aⁿbⁿ$, $n>0$ in \cref{figure:anbn}. 
+
+\begin{figure}
+    \caption{A DPDA for the language~$aⁿbⁿ$, $n>0$}
+    \label{figure:anbn} 
+    \centering
+    % flatex input: [anbn.tikz]
+﻿\begin{tikzpicture}[node distance=3.5cm,auto,shorten >=1pt,auto]
+\tikzstyle{s}=[circle,fill=blue!20,inner sep=2pt]
+    \node[s,accepting,draw] (q₂) {$q₂$};
+    \node[s] (q₁)[ left of=q₂] {$q₁$};
+    \node[initial,s] (q₀)  [left of=q₁] {$q₀$};
+    \path[->]
+     (q₀) edge[loop above,thick] node {$
+                 \begin{aligned}
+                   &\texttt a,X→XX
+                 \end{aligned}$} (q₀)
+     (q₀) edge[loop above,thick] node {$
+                 \begin{aligned}
+                   &\texttt a,X→XX
+                 \end{aligned}$} (q₀)
+   (q₁)edge[loop above,thick] node {
+      {$\texttt b,X→EX $} 
+   } (q₁)
+      (q₀)edge node {$\texttt b,X→EX$} (q₁)
+
+   (q₁) edge node {$
+                 \begin{aligned}
+                   &\texttt b,X→\varepsilon 
+               \end{aligned}$} (q₂) 
+      ;
+\end{tikzpicture}
+
+% flatex input end: [anbn.tikz]
+
+%
+\end{figure}
+The automaton in the figure uses two stack symbols: $E$ for denoting the
+stack's bottom, and $X$, serving as a marker on the stack for 
+each $a$ character that does not found a $b$ that matches it.
+\Cref{lst:anbn} shows how this automaton is specified in FLING.
+
+\begin{excerpt}[language=java,label={lst:anbn},caption={%
+    Fling specification, in a fluent API fashion, of the DPDA of \cref{figure:anbn}.}
+]
+enum ¢$Σ$¢ implements Terminal {a, b } // Define the alphabet of input characters. 
+enum ¢$Γ$¢ implements Named { E, X }// Define the alphabet of stack symbols. 
+public static final DPDA<Named, Verb, Named> dpda = 
+  Grammar.cast(dpda(Q.class, ¢$Σ$¢.class, ¢$Γ$¢.class) // Boiler plate code
+    .q0(q0) // Define the start state
+    .F(q2)  // Define the accepting state
+    .¢$γ$¢0(E)  //  Define the initial stack symbol
+    .¢$δ$¢(q0, a, E, q0, E, X) // Transition for pushing the first $X$
+    .¢$δ$¢(q0, a, X, q0, X, X) // Transition for pushing additional $X$s
+    .¢$δ$¢(q0, b, X, q1) // Transition for consuming first $b$s
+    .¢$δ$¢(q1, b, X, q1) // Transition for consuming subsequent $b$s
+    .¢$δ$¢(q1, ¢$ε$¢(), E, q2) // Finish when bottom of the stack is reached
+    .go()); // Let the builder of the DPDA start its work. 
+\end{excerpt}
+
+Once the automaton is built, we can request \Fling to generate a fluent API
+for it. \Cref{lst:generate} shows how this is done.
+
+\begin{excerpt}[language=java,label={lst:generate},caption={%
+    Using \Fling to create a fluent API for \Java and \CC}
+]
+public static final String JavaFluentAPI = 
+  new JavaAPIAdapter(
+    "fling.examples.generated",  // Package name
+    "AnBn",  // The class name.
+      "$",   // The terminating symbol
+    new NaiveNamer("fling.examples.generated", "AnBn")) //
+        .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+public static final String CppFluentAPI = new CppAPIAdapter(
+  "$", 
+  new NaiveNamer("AnBn")) //
+    .printFluentAPI(new ReliableAPICompiler(dpda).compileFluentAPI());
+  \end{excerpt}
+
+      (This and other examples can be found in \texttt{fling.examples.automata}.)
+  \item \emph{LL(1) EBNF Grammar}, including the sets of terminals and non-terminals, the start symbol
+    and derivation rules.
+      (See examples in \texttt{fling.examples.languages} and the walk-through below.)
+\end{enumerate}
+Use cases of the generated fluent API are found in \texttt{fling.examples.usecases}.
+
+Incidentally, the specification of the input formal language, be it as DPDA or
+EBNF, is done done using fluent API. Moreover, these two fluent APIs that
+\Fling offers to its clients were generated by \Fling itself.
+
+In the case that language is specified using a grammar, \Fling also generates
+code to create the AST of the parsed input. In particular, \Fling defines
+classes that correspond
+to non-terminal symbols of the grammar specification, with class containment
+and inheritance relationships in accordance with the derivation rules of the
+grammar. The fluent API that \Fling generates in this case is such that a
+fluent API call chain returns an instance of the class corresponding to the
+start symbol of the grammar. This instance represents the AST of the particular
+chain that returned it.
+
+\Fling can generate fluent API code for different programming languages. The
+current implementation may produce Java or C++ code (DPDA only). \Fling may be
+extended by language adapters (see package \texttt{fling.adapters} for
+examples) to support other programming languages. The target language must
+support unbounded polymorphism of classes, i.e., classes that may receive type
+parameters, but it is not required that the language allows constraints on
+these parameters, as found in e.g., ML.
+
+For example, let us use \Fling to create a \Java fluent API of \Datalog, and then
+use it to define \Datalog programs and run them.
+A definition of a DSL by its grammar begins with definitions of the set of
+grammar terminals and non-terminals, as shown in \cref{lst:enums} (drawn from file
+\texttt{Datalog.java} in the code).
+\begin{excerpt}[language=java,label={lst:enums},caption=
+  {Terminals and non-terminals for \Datalog grammar}
+]
+/** Set of terminals, i.e., method names of generated fluent API. */
+public enum ¢$Σ$¢ implements Terminal {
+  infer, fact, query, of, and, when, always, v, l
+}
+
+/**
+* Set of non-terminals, i.e., abstract concepts of fluent API; these names
+* will be translated into names of classes of abstract syntax tree that \Fling
+* generates, i.e., this AST will have class {@link Program} which will have a
+* list of {@link Statement}, etc.
+*/
+public enum V implements Variable {
+  Program, Statement, Rule, Query, Fact, Bodyless, WithBody,
+  RuleHead, RuleBody, FirstClause, AdditionalClause, Term
+}
+\end{excerpt}
+The language grammar is then defined by
+\cref{lst:datalog:specification}.
+
+\begin{excerpt}[language=java,label={lst:datalog:specification},caption={\Datalog BNF}]]
+/** Datalog's grammar in Backus-Naur form. */
+public static final BNF bnf = bnf(). //
+  start(Program). // This is the start symbol
+  derive(Program).to(oneOrMore(Statement)). // Program ::= Statement*
+  specialize(Statement).into(Fact, Rule, Query).
+  /* Defines the rule Statement ::= Fact |Rule | Query, but also defines
+   * that classes {@link Fact}, {@link Rule} and {@link Query} extend class
+   * {@link Statement} */
+  derive(Fact).to(fact.with(S), of.many(S)). // Fact ::= fact(S*) of(S*)
+  derive(Query).to(query.with(S), of.many(Term)). //
+  specialize(Rule).into(Bodyless, WithBody). //
+  derive(Bodyless).to(always.with(S), of.many(Term)). //
+  derive(WithBody).to(RuleHead, RuleBody). //
+  derive(RuleHead).to(infer.with(S), of.many(Term)). //
+  derive(RuleBody).to(FirstClause, noneOrMore(AdditionalClause)). //
+  derive(FirstClause).to(when.with(S), of.many(Term)). //
+  derive(AdditionalClause).to(and.with(S), of.many(Term)). //
+  derive(Term).to(l.with(S)).or(v.with(S)). //
+  build();
+\end{excerpt}
+To complete the definition, we define \texttt{S} as an alias to
+the class String as in \cref{lst:S}
+\begin{excerpt}[language=java,label={lst:S},caption=
+    {A definition of \texttt{S} is required for \cref{lst:datalog:specification}}
+]
+/**
+ * Short name of {@link String}.class, used to specify the type of parameters
+ * to fluent API methods in grammar specification.
+ */
+private static final Class<String> S = String.class;
+\end{excerpt}
+
+Now, \Datalog language specification, given in Backus-Naur form (BNF), is embedded in
+the \Java program shown in~\cref{lst:datalog:specification}.
+\begin{excerpt}[label={lst:datalog:program},caption=
+  {\Datalog program}]
+parent(john, bob).
+parent(bob, donald).
+ancestor(A, B) :- parent(A, B).
+ancestor(A, B) :- parent(A, C), ancestor(C, B).
+ancestor(john, X)?
+\end{excerpt}
+\begin{excerpt}[language=java,label={lst:datalog:embedded},caption=
+  {Embedded \Datalog program}]
+Program program =
+  fact("parent").of("john", "bob").
+  fact("parent").of("bob", "donald").
+  infer("ancestor").of(v("A"), v("B")).
+    when("parent").of(v("A"), v("B")).
+  infer("ancestor").of(v("A"), v("B")).
+    when("parent").of(v("A"), v("C")).
+    and("ancestor").of(v("C"), v("B")).
+  query("ancestor").of(l("john"), v("X")).¢﹩¢();
+\end{excerpt}
+After calling \Fling with the \Datalog BNF as its input, we can use the generated
+fluent API to define \Datalog programs. The native \Datalog program shown in~\cref{lst:datalog:program}
+can now be embedded in \Java as a chain of method calls in fluent API style, as
+shown in~\cref{lst:datalog:embedded}.
+
+This chain yields a \tt{Program} object representing the abstract syntax tree (AST)
+of the program, later to be traversed by the client library, executing the program and printing
+its result.
+
+The supplied \Java code runs the embedded \Datalog program by visiting the
+said AST.
+\begin{excerpt}[language=java]
+    new DatalogRunner().visit(program);
+\end{excerpt}
+The \texttt{DatalogRunner} class is implemented as a standard visitor,
+with dedicated methods for each node type. Here is an excerpt of the code
+\begin{excerpt}[language=java]
+public static class DatalogRunner extends DatalogAST.Visitor {
+  final Jatalog j = new Jatalog(); // Use Jatalog, a \Datalog engine
+
+  @Override public void whileVisiting(final Fact fact) throws DatalogException {
+    j.fact(fact.fact, fact.of);
+    print(fact);
+  }
+  @Override public void whileVisiting(final WithBody withBody) throws Exception {
+    j.rule(Expr.expr(withBody.ruleHead.infer, toStrings(withBody.ruleHead.of)), //
+        getExprRightHandSide(withBody));
+    print(withBody);
+  }
+  //…
+}
+\end{excerpt}
+
+% flatex input end: [scope.tex]
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+	% flatex input: [content.tex]
+The key packages and classes in \Fling are:
+\begin{itemize}
+	\item \textbf{Language input}
+	\begin{itemize}
+		\item \tt{fling.BNF}: Language specification in Backus-Naur form.
+		To create a \tt{BNF} one may use the fluent API in \tt{fling.grammars.api}\footnote{
+			this fluent API was originally generated by \Fling}.
+		\item \tt{fling.DPDA}: Language specification in the form of DPDA.
+		\item \tt{fling.internal.grammar.Grammar}: base class for a grammar family.
+		Such family declares its method to convert a BNF to DPDA. Currently, only~$LL(1)$
+		grammars are supported.
+	\end{itemize}
+	\item \textbf{API compilation}
+	\begin{itemize}
+		\item \tt{fling.internal.compiler.api.APICompiler}: compiles DPDA into a fluent API.
+		The fluent API computed in an internal abstract form. This internal form
+    can be then be translated to the target language.
+		There are two compilers available:
+		\begin{itemize}
+			\item \tt{fling.compilers.api.PolynomialAPICompiler}: generates a polynomial number of
+			types, but an illegal API method call returns ``bottom'', empty type instead of raising
+			a compilation exception\footnote{this is an implementation of the API generation algorithm
+			discussed in the paper}.
+			\item \tt{fling.compilers.api.RelizableAPICompiler}: generates a (possibly) exponential number of
+			types, yet all illegal API method calls raise a compilation exception.
+		\end{itemize}
+	\end{itemize}
+	\item \textbf{AST compilation}
+	\begin{itemize}
+		\item \tt{fling.compilers.ast.ASTCompiler}: compiles grammar into types representing its AST nodes.
+		The AST types class is given as an AST, to be translated to a program of the target language.
+	\end{itemize}
+	\item \textbf{Language adaption}:
+	\begin{itemize}
+		\item \tt{fling.adapters}: contains target language adapters.
+		\begin{itemize}
+      \item \tt{fling.adapters.JavaMediator}: integrate the generated API and
+        AST to a \Java program.  Its input must be an~$LL(1)$ grammar.
+      \item \tt{fling.adapters.CppAPIAdapter}: compiles API to \CC code. Its
+        input must be a DPDA.  The generated \CC fluent API supports method
+        chains of the form~\mbox{$a()\rightarrow b().c().\ldots.\$()$\footnote{
+			this adapter is not very useful, yet demonstrates \Fling's potential to generate fluent API in various
+		languages}}.
+		\item \tt{fling.internal.compiler.Namer}: responsible of naming entities in the generate code.
+		Currently there is only one namer available, \tt{fling.namers.NaiveNamer}.
+		\end{itemize}
+	\end{itemize}
+	\item \textbf{Testing}:
+		\item \tt{fling.examples.automata}: language examples given as DPDA
+		\item \tt{fling.examples.languages}: language examples given as BNF
+		\item \tt{fling.examples.usecases}: examples of using the language examples.
+		These use cases refer to code generated by \Fling, located in \tt{fling.examples.generated}.
+		To activate the examples run \tt{fling.examples.ExamplesMainRunMeFirst}.
+\end{itemize}
+
+\subsection{Walk-through}
+
+We now demonstrate the common use-case of \Fling, by defining
+a grammar, generating a fluent API of its language and analyzing
+the ASTs created at run-time.
+Let us create a fluent API for arithmetic expressions supporting addition
+and multiplication, containing words such as ``\cc{2 * (3 + 4)}''.
+
+\begin{enumerate}
+	
+	% Define a grammar:
+	\item \textbf{Choose a grammar for your language:} A possible grammar for the language
+	of arithmetic expression is defined as follows:
+	\begin{excerpt*}
+E -> E + T | T
+T -> T * F | F
+F -> (E) | int
+	\end{excerpt*}
+	\Fling currently supports only~$LL(1)$ grammars, so this grammar should be
+	rewritten to fit the~$LL(1)$ class\footnote{explanation about~$LL(1)$ grammars is given here:~\href{https://andrewbegel.com/cs164/ll1.html}{https://andrewbegel.com/cs164/ll1.html}}:
+	\begin{excerpt*}
+E  -> T E'
+E' -> + T E' | ¢$\varepsilon$¢
+T  -> F T'
+T' -> * F T' | ¢$\varepsilon$¢
+F  -> (E) | int
+	\end{excerpt*}
+	
+	% Encode grammar in Java:
+	\item \textbf{Encode the grammar in \Java:} Write your grammar in a \Java class
+	using \Fling's API.
+	First define the terminal and non-terminal symbols of your language in their respecting
+	\cc{enum}s: Keep in mind you are limited by \Java's naming rules, so replacements
+	might be needed.
+	\begin{excerpt*}[language=java]
+import fling.*;
+¢\ldots¢
+public enum ¢$\Sigma$¢ implements Terminal {
+  plus, mult, begin, end, i
+}
+public enum V implements Variable {
+  E, E_, T, T_, F
+}
+	\end{excerpt*}
+	
+	Next encode the grammar rules, given in BNF, using \Fling's fluent API:
+	\begin{itemize}
+		\item Declare the start symbol
+		\item Compose at least one derivation rule for each non-terminal
+		\item The derivation rules may make use of extended BNF notations
+		\item You may specialize terminals with parameter declarations: These
+			parameter will later be accepted by the fluent API methods\footnote{
+			A specialized terminal counts as a \textit{new terminal}, in respect to the grammar rules}.
+	\end{itemize}
+	\begin{excerpt*}[language=java]
+import fling.BNF;
+import static fling.grammars.api.BNFAPI.bnf;
+¢\ldots¢
+public static final BNF bnf = bnf(). // Start defining BNF
+  start(E). // Declare the start symbol
+  derive(E).to(T, E_). // ¢\cc{E ::= T E'}¢
+  derive(E_).to(plus, T, E_).orNone(). // ¢\cc{E' ::= + T E' | $\varepsilon$}¢
+  derive(T).to(F, T_). // ¢\cc{T ::= F T'}¢
+  derive(T_).to(mult, F, T_).orNone(). // ¢\cc{T' ::= * F T' | $\varepsilon$}¢
+  derive(F).to(begin, E, end).or(i.with(Integer.class)). // ¢\cc{F ::= (E) | int}¢
+  // The terminal ¢\cc{i}¢ representing a number is specialized with a parameter of type ¢\cc{Integer}¢
+  build(); // Yield BNF
+	\end{excerpt*}
+
+	% Generate output files:
+	\item \textbf{Generate the fluent API}: Use a \cc{JavaModerator} to
+	create the fluent API classes. The moderator links together the various
+	compilers offered by \Fling, making the process manageable. The contents
+	of the fluent API classes are computed upon initialing the moderator, and
+	are available each in a class field: Thus writing the classes into the
+	corresponding files is made easy.
+\begin{excerpt*}[language=java]
+import fling.adapters.JavaMediator;
+¢\ldots¢
+JavaMediator jm = new JavaMediator(bnf, // The grammar defined above
+  "fling.examples.generated", // Output package name
+  "SimpleArithmetic", // Output base class name
+  ¢$Σ$¢.class); // Class of terminal symbols
+// Write classes to filesystem:
+writeToFile("SimpleArithmetic", jm.apiClass);
+writeToFile("SimpleArithmeticAST", jm.astClass);
+writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
+\end{excerpt*}
+Here, class \cc{SimpleArithmetic} contains the fluent API interfaces
+declarations.  The declarations used for the AST generated at run-time are in
+\cc{SimpleArithmeticAST}.  
+The~$LL(1)$ run-time compiler used to create the ASTs of fluent API method
+chains is found in class \cc{SimpleArithmeticCompiler}
+
+	% Use the fluent API
+  \item \textbf{Use your fluent API:} After saving the generated code into
+    \texttt{.java} files and compiling this, the fluent API is ready for use.
+	The class containing the fluent API declarations,
+	\cc{SimpleArithmetic}, contains a static method for each terminal which
+  with which an arithmetic expression can start. In the present case, 
+    these are \cc{begin} and \cc{i}.
+  A fluent API call chain then starts with \cc{SimpleArithmetic.begin()} 
+  (or \cc{SimpleArithmetic.i($⋯$)}) and ends with a \cc{.\$()}. 
+  The value returned by the chain is the AST of the declared arithmetic expression.
+	Types of AST nodes are either non-abstract class or an interface:
+	\begin{itemize}
+		\item A class represents an ``is-a'' derivation rule of the form~$X ::= A b c D$,
+			containing a field for each of its non-vacuous descendants.
+		\item An interface represents an ``is-either'' derivation rule of the form~$X ::= A | B | C | D$,
+			implemented by two or more interfaces and classes.
+	\end{itemize}
+\end{enumerate}
+
+Class \cc{SimpleArithmetic} in  package \cc{fling.examples.languages} defines the grammar 
+in a fluent API style
+\begin{excerpt*}[language=java]
+package fling.examples.languages;
+// Imports omitted for brevity
+public class SimpleArithmetic {
+  // Terminal symbols:
+  public enum ¢$Σ$¢ implements Terminal {plus, mult, begin, end, i}
+  // Non-terminal symbols:
+  public enum V implements Variable {E, E_, T, T_, F}
+  public static final BNF bnf = bnf(). // Start defining BNF
+    start(E). // Declare the start symbol
+    derive(E).to(T, E_). // E ::= T E'
+    derive(E_).to(plus, T, E_).orNone(). // E' ::= + T E' | ¢$ε$¢
+    derive(T).to(F, T_). // T ::= F T'
+    derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ¢$ε$¢
+    derive(F).to(begin, E, end).or(i.with(Integer.class)). // F ::= (E) | int
+    build(); // Yield BNF
+  public static void main(String[] args) {
+    JavaMediator jm = new JavaMediator(bnf, // Grammar definition
+      "fling.examples.generated", // Output package name
+      "SimpleArithmetic", // Output base class name
+      ¢$Σ$¢.class); // Class of terminal symbols
+    writeToFile("SimpleArithmetic", jm.apiClass);
+    writeToFile("SimpleArithmeticAST", jm.astClass);
+    writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
+  }
+  private static void writeToFile(String fileName, String fileContent) {
+    // Code for formatting Java code and saving it omitted for brevity 
+  }
+}
+\end{excerpt*}
+
+Compiling and running this class will generate three files:
+\begin{enumerate}
+\item \cc{./src/test/java/fling/examples/generated/SimpleArithmetic.java}
+\item \cc{./src/test/java/fling/examples/generated/SimpleArithmeticAST.java}
+\item \cc{./src/test/java/fling/examples/generated/SimpleArithmeticCompiler}
+\end{enumerate}
+
+You must compile and run these files to be able to test run the fluent API.
+Within Eclipse, this means refreshing the files, by hitting F5.
+Here is a simple use case which puts the generated code to use: 
+\begin{excerpt*}[language=java]
+package fling.examples.usecases;
+import static fling.examples.generated.SimpleArithmetic.i;
+import fling.examples.generated.SimpleArithmeticAST.*;
+public class SimpleArithmeticUseCase {
+  public static void main(String[] args) {
+    // A method calls chain declaring the arithmetic expression 2+(3*4)
+    E e = i(2).mult().begin().i(3).plus().i(4).end().¢\$¢();
+    System.out.println("2 * (3 + 4) = " + evaluate(e)); // Output is "2 * (3 + 4) = 14"
+  }
+  private static int evaluate(E e)¢\ \ \ ¢{ return evaluate(e.t) + evaluate(e.e_); }
+  private static int evaluate(E_ e)¢\ \ ¢{ return e instanceof E_1 ? evaluate((E_1) e) : evaluate((E_2) e); }
+  private static int evaluate(E_1 e)¢\ ¢{ return evaluate(e.t) + evaluate(e.e_); } // ¢\cc{E ::= T E'}¢
+  private static int evaluate(E_2 e)¢\ ¢{ return 0; } // ¢\cc{E ::= $\varepsilon$}¢
+  private static int evaluate(T t)¢\ \ \ ¢{ return evaluate(t.f) * evaluate(t.t_); }
+  private static int evaluate(T_ t)¢\ \ ¢{ return t instanceof T_1 ? evaluate((T_1) t) : evaluate((T_2) t); }
+  private static int evaluate(T_1 t)¢\ ¢{ return evaluate(t.f) * evaluate(t.t_); } // ¢\cc{T ::= F T'}¢
+  private static int evaluate(T_2 t)¢\ ¢{ return 1; } // ¢\cc{T ::= $\varepsilon$}¢
+  private static int evaluate(F f)¢\ \ \ ¢{ return f instanceof F1 ? evaluate((F1) f) : evaluate((F2) f); }
+  private static int evaluate(F1 f)¢\ \ ¢{ return evaluate(f.e); } // ¢\cc{F ::= (E)}¢
+  private static int evaluate(F2 f)¢\ \ ¢{ return f.i; } // ¢\cc{F ::= int}¢
+}
+\end{excerpt*}
+
+\subsection{Troubleshooting}
+Error handling in \Fling is minimal. Some exceptions with useful error message
+do occur.
+Note
+\begin{itemize}
+	\item While standard compilers provide suggestions to fixing improperly designed
+	grammars, \Fling does not offer such a service (although it could). If you get
+	an exception while building the BNF, make sure it adheres the~$LL(1)$ grammar
+	class rules before proceeding. Sending a proper~$LL(1)$ grammar to a \cc{JavaMediator}
+	should generate the fluent API classes successfully.
+	\item Put in mind a code using the fluent API will not compile until it has been
+	generated. While Eclipse support partial compilation, other IDEs might encounter
+	problems while trying to compile, for instance, the above example in a single pass.
+	\item Project \Fling has a few external dependencies. Before using the project,
+	make sure to build it using Maven. An optional compilation script is given below:
+	\begin{excerpt*}
+#!/bin/bash
+# Clone repository
+git clone https://github.com/OriRoth/fling.git
+cd fling
+# Compile without fling.examples.usecases (will produce errors)
+mvn test-compile
+# Generate example fluent-APIs
+mvn -Dtest=fling.examples.ExamplesMainRunMeFirst surefire:test
+# Compile with fling.examples.usecases (without errors)
+mvn test-compile
+# Copy dependencies to local directory
+mvn dependency:copy-dependencies
+# Run "SimpleArithmetic" use-case example
+java -Dfile.encoding=UTF8 -cp target/classes/:target/test-classes/:target/dependency/* \
+fling.examples.usecases.SimpleArithmeticUseCase
+# Should output "2 * (3 + 4) = 14"
+	\end{excerpt*}
+
+The script above clones the project from the repository, compiles it in two
+passes and runs the use case above class \cc{SimpleArithmeticUseCase} class
+depicted above.
+	\item The project files should be UTF-8 encoded, or otherwise will produce errors.
+\end{itemize}
+
+% flatex input end: [content.tex]
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\end{content}
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+	% leave empty if the artifact is only available on the DROPS server.
+	% otherwise, provide links to the latest version of the artifact (e.g., on github)
+	In addition, the artifact is also available at \url{https://github.com/OriRoth/fling}.
+  Clone this repository and open it with Eclipse to gain access to the sources
+  and examples.
+  Be sure to compile and run as \Java application the file named \texttt{ExamplesMainRunMeFirst}
+  to generate the classes used by the tests.
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+  Product was tested on Windows and Linux under the Eclipse Orion environment.
+  Requires \Java 1.8 or above to compile.
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{The artifact is available under MIT license.}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling 
+% downloaders to check that the file is the expected version and suffered 
+% no damage during download.
+\mdsum{5064eb01b5f238cd081fc9c63e604cbf}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{1,113,854 Bytes}
+
+% ARTIFACT: optional appendix
+\appendix
+
+%*flatex input: [00.bbl]
+\begin{thebibliography}{1}
+
+\bibitem{Arnold:Gosling:96}
+Ken Arnold and James Gosling.
+\newblock {\em The \textsc{Java} Programming Language}.
+\newblock Addison Wesley, 1996.
+
+\bibitem{Ceri:Gottlob:Tanca:90}
+Stefano Ceri, Georg Gottlob, and Letizia Tanca.
+\newblock {\em Logic programming and databases}.
+\newblock SVNY, 1990.
+
+\bibitem{Stroustrup:Book:97}
+Bjarne Stroustrup.
+\newblock {\em The C++ programming language}.
+\newblock Pearson Education India, 2000.
+
+\end{thebibliography}
+
+%FLATEX-REM:\bibliography{00,author-names,publishers,big}
+
+\end{document}
+
+% flatex input end: [00.tex]

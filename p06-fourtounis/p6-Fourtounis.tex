@@ -1,0 +1,346 @@
+\documentclass[a4paper,UKenglish]{darts-v2019}
+%This is a template for producing DARTS artifact descriptions. 
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+%\nolinenumbers to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+% Commands for artifact descriptions
+% Written by Camil Demetrescu and Erik Ernst
+% April 8, 2014
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\invokedynamic}{\texttt{invokedynamic}}
+\newcommand{\fundacks}{We gratefully acknowledge funding by the European Research Council, grant 790340 (project \textsc{parse}).}
+\newcommand{\fundparse}{}
+
+\title{Deep Static Modeling of \invokedynamic{} (Artifact)} %TODO Please add
+
+%% \titlerunning{A Sample DARTS Research Description} %optional, in case that the title is too long; the running title should fit into the top page column
+
+% ARTIFACT: Authors may not be exactly the same as the related scholarly paper, e.g., you may want to include authors who contributed to the preparation of the artifact, but not to the companion paper
+
+\author{George Fourtounis}{Department of Informatics, University of Athens, Greece \and \url{http://gfour.github.io/} }{gfour@di.uoa.gr}{https://orcid.org/0000-0002-2116-0797}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+
+\author{Yannis Smaragdakis}{Department of Informatics, University of Athens, Greece \and \url{http://yanniss.github.io/}}{smaragd@di.uoa.gr}{}{}
+
+\authorrunning{G. Fourtounis and Y. Smaragdakis}%TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{George Fourtounis and Yannis Smaragdakis}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+%% \ccsdesc[100]{General and reference~General literature}
+%% \ccsdesc[100]{General and reference}%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+\ccsdesc[500]{Software and its engineering~Compilers}
+\ccsdesc[500]{Theory of computation~Program analysis}
+\ccsdesc[300]{Software and its engineering~General programming languages}
+
+%% \keywords{Dummy keyword}%TODO mandatory; please add comma-separated list of keywords
+\keywords{invokedynamic, lambdas, static analysis}
+
+%TODO Please provide information to the related scholarly information
+\RelatedArticle{George Fourtounis and Yannis Smaragdakis, ``Deep Static Modeling of \invokedynamic{}'', in ...\newline \url{https://doi.org/10.4230/LIPIcs.xxx.xxx.xxx}}
+
+\acknowledgements{\fundacks{}}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  Java 7 introduced programmable dynamic linking in the form of the
+  \invokedynamic{} framework. Static analysis of code containing
+  programmable dynamic linking has often been cited as a significant
+  source of unsoundness in the analysis of Java programs. For example,
+  Java lambdas, introduced in Java 8, are a very popular feature,
+  which is, however, resistant to static analysis, since it mixes
+  \invokedynamic{} with dynamic code generation. These techniques
+  invalidate static analysis assumptions: programmable linking breaks
+  reasoning about method resolution while dynamically generated code
+  is, by definition, not available statically. In this paper, we show
+  that a static analysis can predictively model uses of
+  \invokedynamic{} while also cooperating with extra rules to handle
+  the runtime code generation of lambdas. Our approach plugs into an
+  existing static analysis and helps eliminate all unsoundness in the
+  handling of lambdas (including associated features such as method
+  references) and generic \invokedynamic{} uses. We evaluate our
+  technique on a benchmark suite of our own and on third-party
+  benchmarks, uncovering all code previously unreachable due to
+  unsoundness, highly efficiently.
+ \end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+This artifact contains the evaluation benchmarks for the paper ``Deep
+Static Modeling of \invokedynamic{}'' by G. Fourtounis and
+Y. Smaragdakis (ECOOP '19). The benchmarks duplicate the results of
+the evaluation section of the paper (instructions follow in
+Section~\ref{sec:microbenchmark} and Section~\ref{sec:dynamic}).
+
+Installation is covered in Section~\ref{sec:installation}. Solutions
+to common errors can be found in Appendix~\ref{app:troubleshooting}.
+
+The full sources of Doop (including the Datalog logic for the
+analysis) are included in the directory contained in the DOOP\_HOME
+environment variable. The sources of the benchmarks are also
+included. All sources can be modified and rebuilt (consult
+Section~\ref{sec:inspect-extend-a} and
+Section~\ref{sec:inspect-extend-b} for information on how to inspect
+or extend the artifact).
+
+\subsection{Analyzing the Microbenchmark Suite}
+\label{sec:microbenchmark}
+
+To analyze the microbenchmark suite (Section 5.1 in the paper), run:
+
+\begin{verbatim}
+  cd ${HOME}/invokedynamic-benchmarks
+  ./analyze-microbenchmarks.sh
+\end{verbatim}
+
+\subsubsection{Expected output}
+
+The programs should be analyzed without errors and a table with times
+should be printed (same as Figure 8 in the paper). A list of
+successfull tests should also appear ("Running check: ..."). The
+analysis of these programs covers the set of features mentioned in
+Section 5.1 of the paper. The output also mentions the features
+checked successfully ("Feature: ...").
+
+\subsubsection{Inspection and extension}
+\label{sec:inspect-extend-a}
+
+For further manual inspection or to extend the artifact:
+
+\begin{itemize}
+\item The test programs are integrated as tests run by Doop's Gradle
+  build system. Thus, these tests pass when all analyses have
+  completed successfully and all feature checks have also completed
+  successfully.
+\item The sources of the test programs are under
+  \$\{DOOP\_HOME\}/tests.
+\item The test scenarios for the features are found in the following
+  locations:
+
+  \begin{itemize}
+  \item \$\{DOOP\_HOME\}/src/test/groovy/org/clyze/doop/TestLambdasMethodReferences.groovy
+  \item \$\{DOOP\_HOME\}/src/test/groovy/org/clyze/doop/TestInvokedynamic.groovy
+  \item \$\{DOOP\_HOME\}/souffle-logic/addons/testing/TestInvokedynamic.dl
+  \end{itemize}
+
+\item The Jimple intermediate representation can be found in
+  \$\{DOOP\_HOME\}/out/context-insensitive/test-X/facts/jimple, where X
+  is one of "104-method-references", "107-lambdas", and
+  "115-invokedynamic". This is only available when
+  \texttt{--generate-jimple} is given in the tests (instead of
+  \texttt{--Xlow-mem}).
+\item To inspect more information computed by the analysis, declare
+  the appropriate relation(s) in
+  \$\{DOOP\_HOME\}/souffle-logic/main/export.dl and repeat the
+  analysis. The information will be written to
+  \$\{DOOP\_HOME\}/out/context-insensitive/test-X/database (see
+  previous note for the values of X). The feature checks also validate
+  results read from this directory.
+\end{itemize}
+
+\subsection{Analyzing the Dynamic Test Suite}
+\label{sec:dynamic}
+
+To analyze the test suite of Sui et al. (Section 5.2 in the paper), run:
+
+\begin{verbatim}
+  cd ${HOME}/invokedynamic-benchmarks
+  ./bench-invokedynamic.sh
+\end{verbatim}
+
+\subsubsection{Expected output}
+
+The programs should be analyzed without errors. The script generates
+the table of Figure 9 in the paper.
+
+\subsubsection{Inspection and extension}
+\label{sec:inspect-extend-b}
+
+For further manual inspection or to extend the artifact:
+
+\begin{itemize}
+\item The benchmark sources can be found in directory
+  \$\{HOME\}/invokedynamic-benchmarks/dynamic-benchmark.
+\item The Jimple intermediate representation can be found in
+  \$\{DOOP\_HOME\}/out/context-insensitive/X/facts/jimple, where X is one of
+  "lambda-consumer", "lambda-function", "lambda-supplier", and
+  "dynamo-reflection". This is only available when \texttt{--generate-jimple}
+  is given in bench-invokedynamic.sh (instead of \texttt{--Xlow-mem}).
+\item To inspect more information computed by the analysis, declare
+  the appropriate relation(s) in
+  \$\{DOOP\_HOME\}/souffle-logic/main/export.dl and repeat the
+  analysis. The information will be written to
+  \$\{DOOP\_HOME\}/out/context-insensitive/X/database (see previous
+  note for the values of X).
+\item The expected output is hard coded in file
+  ``bench-invokedynamic.sh'' and the metrics (that should match this
+  output) are calculated by the logic in file
+  ``dynamic-benchmark.dl''.
+\end{itemize}
+
+%% What is the scope of the artifact? What claims of the related scholarly paper are intended to be backed by this artifact?
+\end{scope}
+
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+The artifact package includes file ``invokedynamic-benchmarks.ova'',
+which is a VirtualBox image (``appliance'') that can be directly
+imported by the VirtualBox
+software.\footnote{\url{https://www.virtualbox.org/}}
+
+\subsection{Installation}
+\label{sec:installation}
+
+\begin{itemize}
+\item Import "invokedynamic-benchmarks.ova" in VirtualBox via "File" / "Import
+  Appliance".
+\item Start the virtual machine.
+\item When the virtual machine starts and the desktop appears, open a
+  terminal (menu / "System Tools" / "LXTerminal"). The virtual
+  machine contains a "user" account (password: "user") with sudo
+  capabilities, so that additional software may be installed.
+\end{itemize}
+
+\end{content}
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+% leave empty if the artifact is only available on the DROPS server.
+% otherwise, provide links to the latest version of the artifact (e.g., on github)
+In addition, the artifact is also available at:
+\url{https://gfour.github.io/invokedynamic-artifact/}.
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+
+This artifact is bundled as a VirtualBox image (tested with VirtualBox
+5.2.18) and should thus work on any platform supported by VirtualBox.
+
+Script execution times vary significantly depending on the hardware used.
+We give here the times for two extremes, a slow laptop (system A) running
+the scripts natively and a fast server (system B) running the scripts
+inside the VirtualBox image.
+
+\vspace{0.5em}
+\begin{tabular}{|c|l|l|r|}
+  \hline
+\textbf{System} & \textbf{OS}  & \textbf{CPU}                        & \textbf{RAM} \\
+  \hline
+A                & Ubuntu 16.04 & Intel Core2 Duo CPU T6570, 2.10GHz & 8G           \\
+  \hline
+B                & Ubuntu 18.04 & Intel Xeon Gold 6136 CPU, 3.00GHz  & 629G         \\
+  \hline
+\end{tabular}
+\vspace{0.5em}
+
+The total execution times of the scripts follow in the table below:
+
+\vspace{0.5em}
+\begin{tabular}{|c|l|l|}
+  \hline
+\textbf{System} & \textbf{analyze-microbenchmarks.sh} & \textbf{bench-invokedynamic.sh} \\
+  \hline
+A               & 31min 27sec                         & 38min 39sec                     \\
+  \hline
+B               & 17min 47sec                         & 19min 25sec                     \\
+  \hline
+\end{tabular}
+\vspace{0.5em}
+
+
+%% The hardware capabilities observed by the virtual machine should thus
+%% fulfill the above requirements.
+  
+%% Please specify the platforms on which the artifact is known to
+%% work, including requirements beyond the operating system such as large
+%% amounts of memory or many processor cores.
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{The artifact is available under The Universal Permissive
+  License (UPL), Version 1.0, Copyright (c) 2017 PLAST lab, University
+  of Athens and Martin Bravenboer, except for file
+  \texttt{MethodReferencesTest.java} (Copyright (c) 2013, Oracle
+  and/or its
+  affiliates\footnote{\url{https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/java/javaOO/examples/MethodReferencesTest.java}}).}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling 
+% downloaders to check that the file is the expected version and suffered 
+% no damage during download.
+\mdsum{fc01866198a461b2743a6aad4a2607f1}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{2.3 GiB}
+
+\subparagraph*{Acknowledgements.}
+
+\fundacks{}
+
+% ARTIFACT: optional appendix
+\appendix
+\section{Solutions to common errors}
+\label{app:troubleshooting}
+
+\begin{itemize}
+\item The virtual machine may run out of disk space if benchmarks are
+  run manually and all analysis results are kept. In that case, delete
+  \$\{DOOP\_HOME\}/out or \$\{DOOP\_HOME\}/cache to make space and
+  rerun the analysis.
+\item If the microbenchmark suite fails with a Gradle lock error, there
+  may be a stale Gradle process still running. Stop it (`kill -9 <PID>`)
+  and rerun the analysis.
+\end{itemize}
+
+% ARTIFACT: include here any additional references, if needed...
+
+%%
+%% Bibliography
+%%
+
+%% Either use bibtex (recommended), 
+
+%% \bibliography{darts-v2019-sample-article}
+
+%% .. or use the thebibliography environment explicitely
+
+
+
+\end{document}

@@ -1,0 +1,326 @@
+\passOptions{algorithm}{plain}
+\passOptions{algorithmic}{noend}
+\passOptions{cleveref}{capitalize,nameinlink}
+\passOptions{nth}{super}
+\passOptions{pgfornament}{object=vectorian}
+\passOptions{ulem}{normalem}
+\passOptions{xcolor}{dvipsnames,table}
+\passOptions{tcolorbox}{most}
+\usepackage{tcolorbox}
+
+\usepackage{yogi-unicode}
+\DeclareUnicodeCharacter{2183}{\reflectbox{C}}          %  Ↄ
+\DeclareUnicodeCharacter{2184}{\reflectbox{c}}          %  ↄ
+
+% VIM: /usepackage/,/^\s*$/-!sort -u
+\usepackage{booktabs}
+\usepackage{cleveref}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{microtype}
+\usepackage{nth}
+\usepackage{tikzpagenodes}
+\usepackage{ulem}
+\usepackage{wrapfig}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{yogi-algorithm}
+\usepackage{yogi-lang}
+\usepackage{code}
+\usepackage{mathtools}
+\usepackage{mdframed}
+\usepackage{pifont}
+
+\usetikzlibrary{arrows.meta,automata,shapes,positioning,calc,graphs}
+\tcbuselibrary{theorems}
+
+\definecolor{light-grey}{RGB}{64,64,64}
+\definecolor{lighter-grey}{rgb}{0.95,0.95,0.95}
+\definecolor{light-yellow}{rgb}{0.95,0.95,0.8}
+\definecolor{darkviolet}{rgb}{0.5,0,0.4}
+\definecolor{darkgreen}{rgb}{0,0.4,0.2} 
+\definecolor{darkblue}{rgb}{0.1,0.1,0.9}
+\definecolor{darkgrey}{rgb}{0.5,0.5,0.5}
+\definecolor{lightblue}{rgb}{0.4,0.4,1}
+\definecolor{eclipse-blue}{rgb}{0.16,0.00,1.00}
+\definecolor{eclipse-light-grey}{rgb}{0.39,0.39,0.39}
+\definecolor{eclipse-purple}{rgb}{0.50,0.00,0.33}
+\definecolor{eclipse-green}{rgb}{0.25,0.50,0.37}
+\definecolor{winered}{RGB}{236,0,140}
+\definecolor{ecoop-orange}{RGB}{253,199,17}
+
+\hypersetup{colorlinks=true,linkcolor=winered,citecolor=winered}
+
+\def\squiggly{\bgroup \markoverwith{\textcolor{red}{\lower3.25\p@\hbox{\sixly \char58}}}\ULon}
+\newcommand{\fancyhrule}[2]{%
+	\nointerlineskip \vspace{.5\baselineskip}\hspace{\fill}
+	{\color{#1}
+		\resizebox{0.5\linewidth}{2ex}
+		{{%
+			{\begin{tikzpicture}
+				\node  (C) at (0,0) {};
+				\node (D) at (9,0) {};
+				\path (C) to [ornament=#2] (D);
+			\end{tikzpicture}}}}}%
+	\hspace{\fill}
+	\par\nointerlineskip \vspace{.5\baselineskip}
+}
+
+\pgfkeys{
+	/excerpt/.cd,
+	width/.default=\linewidth,
+	width/.store in=\excerptWidth,
+	left margin/.default=14pt,
+	left margin/.store in=\excerptLeftMargin,
+	language/.default={},
+	language/.store in=\excerptLanguage,
+	caption/.default={},
+	caption/.store in=\excerptCaption,
+	label/.default={},
+	label/.store in=\excerptLabel,
+	background color/.default={light-yellow},
+	background color/.store in=\excerptBackgroundColor,
+}
+\lstnewenvironment{excerpt}[1][]
+{
+	\pgfkeys{/excerpt/.cd,
+		width,
+		left margin,
+		language,
+		caption,
+		label,
+		background color,
+		#1}
+	\medbreak\noindent
+	\minipage{\linewidth}
+	\captionof{lstlisting}{\excerptCaption}
+	\ifx\excerptLabel\empty\relax\else\label{\excerptLabel}\fi
+	\vspace{-15pt}
+	\mdframed[
+		userdefinedwidth=\excerptWidth,
+		backgroundcolor=\excerptBackgroundColor,
+		nobreak=true,
+		linewidth=\excerptLeftMargin,
+		linecolor=white,
+		bottomline=false,
+		topline=false,
+		rightline=false,
+		leftline=true,
+		innerrightmargin=0pt,
+		innertopmargin=-6pt,
+		innerbottommargin=-5pt,
+		innerleftmargin=2em,
+		skipabove=.1125cm,
+	]
+	\lstset{
+		language=\excerptLanguage,
+		moredelim=[is][\squiggly]{_@_}{_@_},
+		morekeywords={enum},
+		numbers=left,
+		stepnumber=1,
+		numberstyle=\tiny,
+	}
+}{
+	\endmdframed
+	\endminipage
+	\medbreak\noindent
+}
+\lstnewenvironment{excerpt*}[1][]
+{
+	\pgfkeys{/excerpt/.cd,
+		width,
+		left margin,
+		language,
+		background color,
+		#1}
+	\smallbreak\noindent
+	\minipage{\linewidth}
+	\vspace{-9pt}
+	\mdframed[
+		userdefinedwidth=\excerptWidth,
+		backgroundcolor=\excerptBackgroundColor,
+		nobreak=true,
+		hidealllines=true,
+		innerrightmargin=0pt,
+		innertopmargin=-6pt,
+		innerbottommargin=-5pt,
+		innerleftmargin=0pt,
+	]
+	\lstset{
+		language=\excerptLanguage,
+		moredelim=[is][\squiggly]{_@_}{_@_},
+		morekeywords={enum},
+	}
+}{
+	\endmdframed
+	\endminipage
+	\vspace{-7pt}
+	\smallbreak\noindent
+}
+\surroundwithmdframed[
+	nobreak=true,
+	hidealllines=true,
+	backgroundcolor=lighter-grey,
+]{algorithmic}
+\surroundwithmdframed[
+	nobreak=true,
+	hidealllines=true,
+	backgroundcolor=light-yellow,
+	leftmargin=15pt,
+	innertopmargin=15pt,
+	innerbottommargin=15pt,
+]{lstlisting}
+\lstset{
+	backgroundcolor={},
+  columns={fullflexible},
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	basicstyle=\scriptsize\ttfamily,
+	escapeinside={¢¢},
+	aboveskip=1em,
+	belowskip=.5em,
+	emphstyle=\bfseries,
+	keywordstyle=\color{eclipse-purple}\bfseries,
+	commentstyle=\color{eclipse-green}\rmfamily\slshape,
+	stringstyle=\color{eclipse-blue},
+	numberstyle=\color{lineNumberColor}\lstfontfamily,
+	showstringspaces=false,
+	morekeywords={enum},
+}
+
+\newcommand\hh{\textsuperscript{\textit{th}}\xspace}
+
+\newcommand\bindent[1]{%
+	\begingroup
+	\setlength{\itemindent}{#1}
+	\addtolength{\algorithmicindent}{\itemindent}
+}
+\newcommand\eindent{\endgroup}
+
+\captionsetup[algorithm]{name=Algorithm}
+\crefname{algorithm}{Alg.}{algs.}
+\crefname{definition}{Def.}{defs.}
+\crefname{figure}{Fig.}{figs.}
+\crefname{section}{Sect.}{sects.}
+\crefname{theorem}{Thm.}{thms.}
+\crefname{lemma}{Lemma}{lemmata}
+\crefname{listing}{List.}{listings}
+\crefformat{equation}{{\normalfont (#2#1#3)}}
+
+\floatstyle{plaintop}
+\restylefloat{algorithm}
+\newtcbtheorem%[number within=section]
+	[crefname={th.}{th.},Crefname={Th.}{Th.}]
+	{boxedtheorem}{Theorem}
+	{
+		before skip=7.5pt,
+		top=4pt,
+		description delimiters none,
+		colback=white,
+		colframe=ecoop-orange,
+		fonttitle=\color{black}\bfseries,
+		separator sign={\ $\text{\LARGE\textbullet}$},
+	}
+	{th}
+\newtcbtheorem[crefname={def.}{def.},Crefname={Def.}{Def.}]
+	{boxeddefinition}{Definition}
+	{
+		before skip=7.5pt,
+		top=4pt,
+		description delimiters none,
+		colback=white,
+		colframe=ecoop-orange,
+		fonttitle=\itshape,
+		coltitle=black,
+		separator sign={\ $\text{\LARGE\textbullet}$},
+		left=5pt,
+		right=5pt,
+	}
+	{df}
+
+\newtcbtheorem[crefname={Lem.}{lems.},Crefname={Lem.}{Lems.}]
+	{boxedlemma}{Lemma}
+	{
+		before skip=7.5pt,
+		top=4pt,
+		description delimiters none,
+		colback=white,
+		colframe=ecoop-orange,
+		fonttitle=\itshape,
+		coltitle=black,
+		separator sign={\ $\text{\LARGE\textbullet}$},
+		left=5pt,
+		right=5pt,
+	}
+	{lm}
+
+\newtcbtheorem[crefname={Prop.}{props.},Crefname={Prop.}{Props.}]
+	{property}{Property}
+	{
+		before skip=7.5pt,
+		top=4pt,
+		description delimiters none,
+		colback=white,
+		colframe=ecoop-orange,
+		fonttitle=\itshape,
+		coltitle=black,
+		separator sign={\ $\text{\LARGE\textbullet}$},
+		left=5pt,
+		right=5pt,
+	}
+	{property}
+
+
+\newcommand{\etal}{et al.\@\xspace}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\LL}{{\ensuremath{LL(1)}}\xspace}
+\newcommand{\JAM}{{\ensuremath{\chi}}}
+\newcommand{\topbot}{\ensuremath{{\text{\normalfont \ttfamily \scalebox{2}[1]{I}}}}}
+\newcommand{\Fling}{F\textsc{ling}\xspace}
+\newcommand{\Yacc}{Y\textsc{acc}\xspace}
+\DeclareRobustCommand{\sf}[1]{{\ensuremath{\textsf{#1}}}}
+\DeclareRobustCommand{\tt}[1]{{\ensuremath{\texttt{#1}}}}
+\DeclareRobustCommand{\set}[1]{{%
+		\def\temp{#1}\ifx\temp\empty%
+		\ensuremath{\emptyset}
+		\else%
+		\ensuremath{\{#1\}}%
+		\fi	
+}}
+\newcommand{\Accept}{{\color{green}\emph{Accept}}}
+\newcommand{\Reject}{{\color{red}\emph{Reject}}}
+\def\<#1>{\langle\textit{#1}\rangle>}
+\def\s #1{\textsf{#1}}
+\def\z #1{\text{\textrm`\s{#1}\textrm'}}
+\def\eq#1{\cref{eq:#1}}
+\newcommand\term[1]{\emph{#1}}
+\newcommand\acronym[2][\relax]{\emph{\firstBold{#2}}~(#1)}
+\newcommand{\rulesepv}{\unskip{\color{black}\vrule}\hspace{.5cm}}
+\newcommand{\ruleseph}{\unskip\vspace{.25cm}{\color{black}\hrule}}
+\newcommand{\fname}[1]{\ensuremath{\textrm{\textup{\textsf{#1}}}}}
+\newcommand{\pars}[1][]{\ensuremath{\hspace{-.05cm}\texttt{(}#1\texttt{)}\xspace}}
+
+\newcommand{\encoding}[2]{e(#1,#2)}
+\newcommand{\child}[3]{\encoding{#1}{#2}[#3]}
+\newcommand{\inductive}[1]{\noindent{\sffamily\textbf{\color{light-grey} Inductive #1.}}\xspace}
+\DeclareUnicodeCharacter{03B3}{\ensuremath{\gamma}}                  %  γ
+\DeclareUnicodeCharacter{03B4}{\ensuremath{\delta}}                  %  δ
+
+\newcommand\gobble[1]{}
+\def\<#1>{⟨\textit{#1}⟩\;}
+\def\|{|\;}
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+	endorsed by the Artifact Evaluation Committee is available free of 
+	charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}

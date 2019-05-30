@@ -1,0 +1,257 @@
+% !TeX spellcheck = en_US
+\documentclass[a4paper,UKenglish]{darts-v2019}
+%This is a template for producing DARTS artifact descriptions. 
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+ 
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+%\nolinenumbers to disable line numbers
+
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+% Commands for artifact descriptions
+% Written by Camil Demetrescu and Erik Ernst
+% April 8, 2014
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+
+% Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Multiverse Debugging: Non-deterministic Debugging for Non-deterministic Programs (Artifact)} %Please add
+
+\titlerunning{Multiverse Debugging: Non-deterministic Debugging for Non-deterministic Programs} %optional, in case that the title is too long; the running title should fit into the top page column
+
+% ARTIFACT: Authors may not be exactly the same as the related scholarly paper, e.g., you may want to include authors who contributed to the preparation of the artifact, but not to the companion paper
+
+\author{Robbert Gurdeep Singh}{Universiteit Gent, Belgium}{Robbert.GurdeepSingh@ugent.be}{}{Doctoral fellowship from the Special Research Fund (BOF) of Ghent University (reference number: BOF18/DOC/327)}
+%https://orcid.org/0000-0003-4394-0011
+\author{Carmen Torres Lopez}{Vrije Universiteit Brussel, Belgium}{ctorresl@vub.be}{}{FWO Research Foundation Flanders (FWO) grant, project number G004816N.}
+%https://orcid.org/0000-0002-3125-0921
+\author{Stefan Marr}{School of Computing University of Kent, United Kingdom}{s.marr@kent.ac.uk}{}{}%TODO check
+%https://orcid.org/0000-0001-9059-5180
+\author{Elisa Gonzalez Boix}{Vrije Universiteit Brussel, Belgium}{egonzale@vub.be}{}{}%TODO check
+\author{Christophe Scholliers}{Universiteit Gent, Belgium}{Christophe.Scholliers@ugent.be}{}{}%TODO check 
+
+
+\authorrunning{R. Gurdeep Singh, C. Torres Lopez, S. Marr, E. Gonzalez Boix, C. Scholliers}%mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Robbert Gurdeep Singh, Carmen Torres Lopez, Stefan Marr, Elisa Gonzalez Boix, Christophe Scholliers}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\begin{CCSXML}
+	<ccs2012>
+	<concept>
+	<concept_id>10011007.10011006.10011008.10011009.10011014</concept_id>
+	<concept_desc>Software and its engineering~Concurrent programming languages</concept_desc>
+	<concept_significance>500</concept_significance>
+	</concept>
+	<concept>
+	<concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+	<concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+	<concept_significance>500</concept_significance>
+	</concept>
+	</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Concurrent programming languages}
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+%mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+
+\keywords{Debugging, Concurrency, Actors, Formal Semantics}%mandatory; please add comma-separated list of keywords
+
+%TODO Please provide information to the related scholarly information (DOI not yet known)
+\RelatedArticle{C. Lopez, R. Gurdeep Singh, S. Marr, E. Gonzalez Boix, C. Scholliers, ``Multiverse Debugging: Non-deterministic Debugging for Non-deterministic Programs'', in Proceedings of the 33rd European Conference on Object-Oriented Programming (ECOOP 2019), LIPIcs, Vol.~?, pp.??--??, 2019.\newline \url{https://doi.org/10.4230/LIPIcs.xxx.xxx.xxx}}
+
+%\acknowledgements{}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Many of today's software systems are parallel or concurrent. With the
+rise of Node.js and more generally event-loop architectures, many
+systems need to handle concurrency. However, their non-deterministic
+behavior makes it hard to debug. Today's interactive debuggers
+unfortunately do not support developers in debugging non-deterministic
+issues. They only allow exploring a single execution path. Therefore,
+some bugs may never be reproduced in the debugging session, because the
+conditions to trigger are not reached. As a solution, we propose
+multiverse debugging, a new approach for debugging non-deterministic
+programs that allow developers to observe all possible execution paths
+of a parallel program and debug it interactively. We introduce the
+concepts of multiverse breakpoints and stepping, which can halt a
+program in different execution paths, i.e.~universes. We apply
+multiverse debugging to AmbientTalk, an actor-based language, resulting
+in Voyager, a proof of concept multiverse debugger that takes as
+input Featherweight AmbientTalk programs written in PLT-Redex, and
+allows programmers to interactively browse all possible execution states
+by means of multiverse breakpoints and stepping commands. We provide a
+proof of non-interference, i.e we prove that observing the behavior of a
+program by the debugger does not affect the behavior of that program and
+vice versa. Multiverse debugging establishes the foundation for
+debugging non-deterministic programs interactively, which we believe can
+aid the development of parallel and concurrent systems.
+ \end{abstract}
+
+% ARTIFACT: please stick to the structure of 7 sections provided below
+
+% ARTIFACT: section on the scope of the artifact (what claims of the paper are intended to be backed by this artifact?)
+\begin{scope}
+
+This artifact accompanies the article ``Multiverse Debugging:
+Non-deterministic Debugging for Non-deterministic Programs''. In the
+article we argue that parallelism has become an integral part of modern
+software ranging from large-scale server code to responsive web
+applications and networked embedded systems. While a wide range of
+high-level concurrency abstractions are available,
+understanding and debugging parallel programs remains challenging. The
+main reason why parallel programs are so difficult to debug is due to
+their non-determinism. The state of a parallel program at any given
+moment in time can alter to one of \emph{many} possible successor
+states. As a consequence, it is very difficult to reason about their
+behavior and to reproduce bugs as they may only manifest in rare
+execution traces.
+
+We propose \emph{multiverse debugging}, a novel debugging
+technique for parallel programs which combines online breakpoint-based
+debugging with state exploration from static techniques. The key idea of
+multiverse debugging is that \emph{non-deterministic programs require
+	non-deterministic debugging}. Contrary to current state-of-the-art
+debuggers, which only execute the program in one execution path
+(i.e.~one \emph{universe}), a multiverse debugger can observe all
+possible universes. A multiverse debugger is itself a non-deterministic
+program which is able to explore all possible states of a parallel
+program while leveraging breakpoints and stepping commands of online
+debuggers to interactively search for the root cause of a bug. This
+means that regular breakpoints become \emph{multiverse breakpoints}
+which are potentially triggered multiple times in different universes.
+As such, a multiverse debugger ensures that if a bug is in the program,
+it will be observed during the debugging session.
+
+The main contributions of the article are:
+
+\begin{enumerate}
+	\item
+	The definition of multiverse debugging
+	\item
+	A semantics for non-deterministic debugger and proof of
+	non-interference
+	\item
+	An implementation of applying multiverse debugging to an actor-based
+	language called Voyager, a tool to interact with AmbientTalk
+	programs written in PLT-Redex.
+\end{enumerate}
+
+The first contribution is a conceptual contribution and thus it is not
+backed by the artifact. This artifact contains:
+
+\begin{enumerate}
+	\item
+	Voyager, a proof-of-concept tool which applies multiverse debugging
+	over AmbientTalk programs written in PLT-Redex (contribution 3).
+	\item
+	The semantics for a non-deterministic debugger in PLT-Redex, i.e.~the
+	Voyager semantics (part of contribution 2). The proof of
+	non-interference has not been mechanized, and it is only shown in the
+	companion article.
+\end{enumerate}
+
+This artifact's main focus is on explaining Voyager, a proof-of-concept
+multiverse debugger for AmbientTalk programs. The goal of this tool is
+to give developers a first impression of what it would feel like to
+interactively debug a non-deterministic program with a multiverse
+debugger.
+\end{scope}
+\newpage
+% ARTIFACT: section on the contents of the artifact (code, data, etc.)
+\begin{content}
+In this artifact, we provide:
+
+\begin{itemize}
+	\item
+	A proof-of-concept multiverse debugging tool called \emph{Voyager}
+	packaged as an Open Virtualization Format archive for Virtual Box
+	(\texttt{VoyagerECOOP2019.ova}). The tool's user interface is automatically started in a web-browser once the Virtual Machine has started.
+	\item
+	The debugging semantics for the AmbientTalk language:
+	``\texttt{AmbientTalk-Debugger}'' stored in the virtual machine at
+	\texttt{/home/osboxes/demo/DebuggerPaperExample.zip}.
+	\item Documentation on how to reproduce the examples of the research article: Opened in a second tab of the web-browser.
+\end{itemize}
+\end{content}
+
+% ARTIFACT: section containing links to sites holding the
+% latest version of the code/data, if any
+\begin{getting}
+% leave empty if the artifact is only available on the DROPS server.
+% otherwise, provide links to the latest version of the artifact (e.g., on github)
+% In addition, the artifact is also available at:
+% \url{https://to.be.specified}.
+\end{getting}
+
+% ARTIFACT: section specifying the platforms on which the artifact is known to
+% work, including requirements beyond the operating system such as large
+% amounts of memory or many processor cores
+\begin{platforms}
+
+The \texttt{ova}-file has been tested in Virtual Box versions 5.2.22 and
+6.0.4. For best performance, increase the assigned amount of CPU power, RAM and Video Memory.
+
+\end{platforms}
+
+% ARTIFACT: section specifying the license under which the artifact is
+% made available
+\license{\href{http://www.gnu.org/licenses/lgpl-3.0.html}{GNU Lesser General Public License v3.0 or later}}
+
+% ARTIFACT: section specifying the md5 sum of the artifact master file
+% uploaded to the Dagstuhl Research Online Publication Server, enabling 
+% downloaders to check that the file is the expected version and suffered 
+% no damage during download.
+\mdsum{a11ad9a590566bf6f5af3393aecd80f8}
+
+% ARTIFACT: section specifying the size of the artifact master file uploaded
+% to the Dagstuhl Research Online Publication Server
+\artifactsize{3.61 GiB}
+
+\subparagraph*{Acknowledgements.}
+
+We would like to thank Thomas Dupriez (ENS Paris-Saclay - RMoD, Inria, Lille-Nord Europe) for an initial implementation of the underlying visualization and reduction code.
+
+% ARTIFACT: optional appendix
+%\appendix
+
+
+% ARTIFACT: include here any additional references, if needed...
+
+%%
+%% Bibliography
+%%
+
+%% Either use bibtex (recommended), 
+
+%\bibliography{darts-v2019-sample-article}
+
+%% .. or use the thebibliography environment explicitely
+
+
+
+\end{document}

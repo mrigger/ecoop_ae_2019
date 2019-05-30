@@ -1,0 +1,221 @@
+
+
+
+\documentclass[a4paper,USenglish]{darts-v2019}
+%This is a template for producing LIPIcs articles. 
+%See lipics-manual.pdf for further information.
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+%\hideLIPIcs
+\nolinenumbers
+
+\RelatedArticle{Matthias Springer and Hidehiko Masuhara, ``DynaSOAr: A Parallel Memory Allocator for Object-oriented Programming on GPUs with Efficient Memory Access'', in Proceedings of the 33rd European Conference on Object-Oriented Programming (ECOOP 2019), LIPIcs, Vol.~134, pp.~16:1--16:37, 2019.\newline \url{https://doi.org/10.4230/LIPIcs.ECOOP.2019.16}}
+
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+
+%\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
+
+\newcommand\soaalloc{\textsc{DynaSOAr}}
+
+
+\bibliographystyle{plainurl}% the recommnded bibstyle
+
+%\title{DynaSOAr: A Parallel GPU Object Allocator for Single-Method Multiple-Objects Applications}
+%\title{\soaalloc{}: Accelerating Single-Method Multiple-Objects Applications on GPUs}
+
+\title{DynaSOAr: A Parallel Memory Allocator for Object-oriented Programming on GPUs with Efficient Memory Access (Artifact)}
+\titlerunning{\soaalloc{}}%optional, please use if title is longer than one line
+
+\author{Matthias Springer}{Tokyo Institute of Technology}{matthias.springer@acm.org}{}{}%mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty.
+
+\author{Hidehiko Masuhara}{Tokyo Institute of Technology}{masuhara@acm.org}{}{}
+
+%\authorrunning{M. Springer and H. Masuhara}%mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+%\authorrunning{Anonymous Authors}
+
+\Copyright{Matthias Springer and Hidehiko Masuhara}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+%\subjclass{Software and its engineering $\rightarrow$ Allocation
+%/ deallocation}% mandatory: Please choose ACM 2012 classifications from https://www.acm.org/publications/class-2012 or https://dl.acm.org/ccs/ccs_flat.cfm . E.g., cite as "General and reference $\rightarrow$ General literature" or \ccsdesc[100]{General and reference~General literature}. 
+
+%\keywords{Data Layout, Object-oriented Programming, Dynamic Memory Allocation, SIMD, Structure of Arrays} %mandatory
+
+%\category{}%optional, e.g. invited paper
+
+%\relatedversion{}%optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+
+\acknowledgements{This work was supported by a JSPS Research Fellowship for Young Scientists (KAKENHI Grant Number 18J14726). We gratefully acknowledge the support of NVIDIA Corporation with the donation of the TITAN Xp GPU used for this research.} 
+
+%\supplement{Source code: \url{https://github.com/prg-titech/dynasoar}. Extended version: \url{https://arxiv.org/abs/1810.11765}}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+
+%\funding{}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+\ccsdesc[500]{Software and its engineering~Allocation / deallocation strategies}
+\ccsdesc[300]{Software and its engineering~Object oriented languages}
+\ccsdesc[300]{Computer systems organization~Single instruction, multiple data}%TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+
+%\subjclass{Software and its engineering $\rightarrow$ Allocation
+%/ deallocation}% mandatory: Please choose ACM 2012 classifications from https://www.acm.org/publications/class-2012 or https://dl.acm.org/ccs/ccs_flat.cfm . E.g., cite as "General and reference $\rightarrow$ General literature" or \ccsdesc[100]{General and reference~General literature}. 
+
+\keywords{CUDA, Data Layout, Dynamic Memory Allocation, GPUs, Object-oriented Programming, SIMD, Single-Instruction Multiple-Objects, Structure of Arrays} %mandatory
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Volume{3}
+\Issue{2}
+\Article{1}
+\RelatedConference{42nd Conference on Very Important Topics (CVIT 2016), December 24--27, 2016, Little Whinging, United Kingdom}
+% Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\acknowledgements{I want to thank \dots}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\EventEditors{John Q. Open and Joan R. Access}
+%\EventNoEds{2}
+%\EventLongTitle{33rd European Conference on Object-oriented Programming}
+%\EventShortTitle{ECOOP 2019}
+%\EventAcronym{ECOOP}
+%\EventYear{2019}
+%\EventDate{December 24--27, 2016}
+%\EventLocation{Little Whinging, United Kingdom}
+%\EventLogo{}
+%\SeriesVolume{42}
+%\ArticleNo{23}
+%\nolinenumbers %uncomment to disable line numbering
+%\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.callouts}
+
+\tikzset{
+  level/.style   = { ultra thick, blue },
+  connect/.style = { dashed, red },
+  notice/.style  = { draw, rectangle callout, callout relative pointer={#1} },
+  label/.style   = { text width=2cm }
+}
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\usepackage[linesnumbered, ruled]{algorithm2e} %noend
+%\usepackage{algorithm,algorithmic}
+\usepackage{multicol}
+
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage{subfloat}
+\usepackage{float}
+\usepackage{varwidth}
+
+%% Narrow letter spacing
+\newcommand\narrowstyle{\SetTracking{encoding=*}{-50}\lsstyle}
+%% Custom letter spacing
+\newcommand\spacedstyle[1]{\SetTracking{encoding=*}{#1}\lsstyle}
+%% Normal letter spacing
+\newcommand\normalstyle{\SetTracking{encoding=*}{0}\lsstyle}
+
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ 
+  %backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\ttfamily\scriptsize,        % the size of the fonts that are used for the code
+  backgroundcolor = \color{white},
+  frame = single, 
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue}\bfseries,       % keyword style
+  language=C++,                 % the language of the code
+  morekeywords={\_\_device\_\_,\_\_global\_\_,nullptr},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                     % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\lstset{escapeinside={<@}{@>}}
+\SetAlFnt{\sffamily}
+%\setlength{\floatsep}{5pt plus 1.0pt minus 2.0pt}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+
+
+
+\begin{abstract}
+This artifact contains the source code of DynaSOAr, a CUDA framework for Single-Method Multiple-Objects (SMMO) applications. SMMO is a type of object-oriented programs in which parallelism is expressed by running the same method on all applications of a type. 
+
+DynaSOAr is a dynamic memory allocator, combined with a data layout DSL and a parallel do-all operation. This artifact provides a tutorial explaining the API of DynaSOAr, along with nine benchmark applications from different domains. All benchmarks can be configured to use a different memory allocator to allow for a comparison with other state-of-the-art memory allocators.
+\end{abstract}
+
+\section{Scope}
+The main purpose of the artifact is (1) to support reproducibility of the experiments in the original paper and (2) to support programmers in using \textsc{DynaSOAr} in their own applications. In particular, this artifact provides experiments that support the following claims from the paper:
+
+\begin{itemize}
+  \item SMMO applications that use  \textsc{DynaSOAr} exhibit superior runtime performance and space efficiency compared to other GPU allocators (mallocMC, Halloc, CUDA allocator).
+%  \item \textsc{DynaSOAr} scales nearly linearly with increasing heap sizes and problem sizes (and thus an increasing number of concurrent (de)allocations).
+  \item \textsc{DynaSOAr} exhibits low fragmentation and is able to utilize almost the entire heap for allocations.
+  \item As shown by our application examples, many programs can be expressed in SMMO.
+\end{itemize}
+
+\section{Content}
+This artifact includes:
+
+\begin{itemize}
+  \item The CUDA source code of \textsc{DynaSOAr}, the evaluation benchmarks and the infrastructure to run the benchmarks with other allocators.
+  \item A description of all benchmark applications, highlighting their SMMO structure.
+  \item A tutorial describing how to setup the artifact, how to use \textsc{DynaSOAr}, and how to interpret the program output in debug mode, which reflects the internal state of the allocator.
+  \item Instructions for recreating a subset of the experiments.
+\end{itemize}
+
+\section{Getting the Artifact}
+The most recent source code of \textsc{DynaSOAr} and the benchmark applications is available at: \\ \url{https://github.com/prg-titech/dynasoar/}.
+
+\bigskip
+\noindent
+The remainder of the artifact is stored in the GitHub Wiki pages of the project: \\ \url{https://github.com/prg-titech/dynasoar/wiki}.
+
+\bigskip
+\noindent
+We provide a zip file with the source code and a PDF export of the GitHub Wiki with this artifact.
+
+\section{Tested Platforms}
+The artifact was tested on Ubuntu~16.04.1 with three GPUs: NVIDIA GeForce 940MX, NVIDIA TITAN Xp and NVIDIA GeForce 1050 TI. A GPU with a minimum compute capability of 5.x and the CUDA Toolkit in version 9 or higher are required. Detailed software/hardware requirements can be found in the tutorial.
+
+\section{MD5 Checksum}
+The MD5 checksum of the zip file is e7b8bb33961ae66209581e2c58c6cad3.
+
+\section{Size of the Artifact}
+The size of the zip file is 3~MB.
+
+\section{License}
+\textsc{DynaSOAr} is licensed under the MIT License. \textsc{DynaSOAr} depends on the \emph{CUB} library which is licensed under the BSD license. To allow for an easy setup, this artifact contains the source code of two other allocators, MallocMC and Halloc. These allocators are licensed under the BSD License. See the \texttt{LICENSE} file for details.
+
+
+\end{document}
