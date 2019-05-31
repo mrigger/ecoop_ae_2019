@@ -1,8 +1,331 @@
 % flatex input: [00.tex]
-%\def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
+\def\passOptions#1#2{\PassOptionsToPackage{#2}{#1}}
 
 \documentclass[a4paper,UKenglish,cleveref, autoref]{darts-v2019}
-\usepackage{\jobname}
+
+\passOptions{algorithm}{plain}
+\passOptions{algorithmic}{noend}
+\passOptions{cleveref}{capitalize,nameinlink}
+\passOptions{nth}{super}
+\passOptions{pgfornament}{object=vectorian}
+\passOptions{ulem}{normalem}
+\passOptions{xcolor}{dvipsnames,table}
+\passOptions{tcolorbox}{most}
+
+\usepackage{tcolorbox}
+\usepackage{booktabs}
+\usepackage{cleveref}
+\usepackage{color}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{lipsum}
+\usepackage{microtype}
+\usepackage{nth}
+\usepackage{tikzpagenodes}
+\usepackage{ulem}
+\usepackage{wrapfig}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{mathtools}
+\usepackage{mdframed}
+\usepackage{pifont}
+
+\usetikzlibrary{arrows.meta,automata,shapes,positioning,calc,graphs}
+\tcbuselibrary{theorems}
+
+\definecolor{light-grey}{RGB}{64,64,64}
+\definecolor{lighter-grey}{rgb}{0.95,0.95,0.95}
+\definecolor{light-yellow}{rgb}{0.95,0.95,0.8}
+\definecolor{darkviolet}{rgb}{0.5,0,0.4}
+\definecolor{darkgreen}{rgb}{0,0.4,0.2} 
+\definecolor{darkblue}{rgb}{0.1,0.1,0.9}
+\definecolor{darkgrey}{rgb}{0.5,0.5,0.5}
+\definecolor{lightblue}{rgb}{0.4,0.4,1}
+\definecolor{eclipse-blue}{rgb}{0.16,0.00,1.00}
+\definecolor{eclipse-light-grey}{rgb}{0.39,0.39,0.39}
+\definecolor{eclipse-purple}{rgb}{0.50,0.00,0.33}
+\definecolor{eclipse-green}{rgb}{0.25,0.50,0.37}
+\definecolor{winered}{RGB}{236,0,140}
+\definecolor{ecoop-orange}{RGB}{253,199,17}
+
+\hypersetup{colorlinks=true,linkcolor=winered,citecolor=winered}
+
+\def\squiggly{\bgroup \markoverwith{\textcolor{red}{\lower3.25\p@\hbox{\sixly \char58}}}\ULon}
+\newcommand{\fancyhrule}[2]{%
+	\nointerlineskip \vspace{.5\baselineskip}\hspace{\fill}
+	{\color{#1}
+		\resizebox{0.5\linewidth}{2ex}
+		{{%
+				{\begin{tikzpicture}
+					\node  (C) at (0,0) {};
+					\node (D) at (9,0) {};
+					\path (C) to [ornament=#2] (D);
+					\end{tikzpicture}}}}}%
+	\hspace{\fill}
+	\par\nointerlineskip \vspace{.5\baselineskip}
+}
+
+\pgfkeys{
+	/excerpt/.cd,
+	width/.default=\linewidth,
+	width/.store in=\excerptWidth,
+	left margin/.default=14pt,
+	left margin/.store in=\excerptLeftMargin,
+	language/.default={},
+	language/.store in=\excerptLanguage,
+	caption/.default={},
+	caption/.store in=\excerptCaption,
+	label/.default={},
+	label/.store in=\excerptLabel,
+	background color/.default={light-yellow},
+	background color/.store in=\excerptBackgroundColor,
+}
+\lstnewenvironment{excerpt}[1][]
+{
+	\pgfkeys{/excerpt/.cd,
+		width,
+		left margin,
+		language,
+		caption,
+		label,
+		background color,
+		#1}
+	\medbreak\noindent
+	\minipage{\linewidth}
+	\captionof{lstlisting}{\excerptCaption}
+	\ifx\excerptLabel\empty\relax\else\label{\excerptLabel}\fi
+	\vspace{-15pt}
+	\mdframed[
+	userdefinedwidth=\excerptWidth,
+	backgroundcolor=\excerptBackgroundColor,
+	nobreak=true,
+	linewidth=\excerptLeftMargin,
+	linecolor=white,
+	bottomline=false,
+	topline=false,
+	rightline=false,
+	leftline=true,
+	innerrightmargin=0pt,
+	innertopmargin=-6pt,
+	innerbottommargin=-5pt,
+	innerleftmargin=2em,
+	skipabove=.1125cm,
+	]
+	\lstset{
+		language=\excerptLanguage,
+		moredelim=[is][\squiggly]{_@_}{_@_},
+		morekeywords={enum},
+		numbers=left,
+		stepnumber=1,
+		numberstyle=\tiny,
+	}
+}{
+	\endmdframed
+	\endminipage
+	\medbreak\noindent
+}
+\lstnewenvironment{excerpt*}[1][]
+{
+	\pgfkeys{/excerpt/.cd,
+		width,
+		left margin,
+		language,
+		background color,
+		#1}
+	\smallbreak\noindent
+	\minipage{\linewidth}
+	\vspace{-9pt}
+	\mdframed[
+	userdefinedwidth=\excerptWidth,
+	backgroundcolor=\excerptBackgroundColor,
+	nobreak=true,
+	hidealllines=true,
+	innerrightmargin=0pt,
+	innertopmargin=-6pt,
+	innerbottommargin=-5pt,
+	innerleftmargin=0pt,
+	]
+	\lstset{
+		language=\excerptLanguage,
+		moredelim=[is][\squiggly]{_@_}{_@_},
+		morekeywords={enum},
+	}
+}{
+	\endmdframed
+	\endminipage
+	\vspace{-7pt}
+	\smallbreak\noindent
+}
+\surroundwithmdframed[
+nobreak=true,
+hidealllines=true,
+backgroundcolor=lighter-grey,
+]{algorithmic}
+\surroundwithmdframed[
+nobreak=true,
+hidealllines=true,
+backgroundcolor=light-yellow,
+leftmargin=15pt,
+innertopmargin=15pt,
+innerbottommargin=15pt,
+]{lstlisting}
+\lstset{
+	backgroundcolor={},
+	columns={fullflexible},
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	basicstyle=\scriptsize\ttfamily,
+	escapeinside={¢}{¢},
+	aboveskip=1em,
+	belowskip=.5em,
+	emphstyle=\bfseries,
+	keywordstyle=\color{eclipse-purple}\bfseries,
+	commentstyle=\color{eclipse-green}\rmfamily\slshape,
+	stringstyle=\color{eclipse-blue},
+	numberstyle=\color{lineNumberColor}\lstfontfamily,
+	showstringspaces=false,
+	morekeywords={enum},
+}
+
+\newcommand\hh{\textsuperscript{\textit{th}}\xspace}
+
+\newcommand\bindent[1]{%
+	\begingroup
+	\setlength{\itemindent}{#1}
+	\addtolength{\algorithmicindent}{\itemindent}
+}
+\newcommand\eindent{\endgroup}
+
+\captionsetup[algorithm]{name=Algorithm}
+\crefname{algorithm}{Alg.}{algs.}
+\crefname{definition}{Def.}{defs.}
+\crefname{figure}{Fig.}{figs.}
+\crefname{section}{Sect.}{sects.}
+\crefname{theorem}{Thm.}{thms.}
+\crefname{lemma}{Lemma}{lemmata}
+\crefname{listing}{List.}{listings}
+\crefformat{equation}{{\normalfont (#2#1#3)}}
+
+\floatstyle{plaintop}
+\restylefloat{algorithm}
+\newtcbtheorem%[number within=section]
+[crefname={th.}{th.},Crefname={Th.}{Th.}]
+{boxedtheorem}{Theorem}
+{
+	before skip=7.5pt,
+	top=4pt,
+	description delimiters none,
+	colback=white,
+	colframe=ecoop-orange,
+	fonttitle=\color{black}\bfseries,
+	separator sign={\ $\text{\LARGE\textbullet}$},
+}
+{th}
+\newtcbtheorem[crefname={def.}{def.},Crefname={Def.}{Def.}]
+{boxeddefinition}{Definition}
+{
+	before skip=7.5pt,
+	top=4pt,
+	description delimiters none,
+	colback=white,
+	colframe=ecoop-orange,
+	fonttitle=\itshape,
+	coltitle=black,
+	separator sign={\ $\text{\LARGE\textbullet}$},
+	left=5pt,
+	right=5pt,
+}
+{df}
+
+\newtcbtheorem[crefname={Lem.}{lems.},Crefname={Lem.}{Lems.}]
+{boxedlemma}{Lemma}
+{
+	before skip=7.5pt,
+	top=4pt,
+	description delimiters none,
+	colback=white,
+	colframe=ecoop-orange,
+	fonttitle=\itshape,
+	coltitle=black,
+	separator sign={\ $\text{\LARGE\textbullet}$},
+	left=5pt,
+	right=5pt,
+}
+{lm}
+
+\newtcbtheorem[crefname={Prop.}{props.},Crefname={Prop.}{Props.}]
+{property}{Property}
+{
+	before skip=7.5pt,
+	top=4pt,
+	description delimiters none,
+	colback=white,
+	colframe=ecoop-orange,
+	fonttitle=\itshape,
+	coltitle=black,
+	separator sign={\ $\text{\LARGE\textbullet}$},
+	left=5pt,
+	right=5pt,
+}
+{property}
+
+
+\newcommand{\etal}{et al.\@\xspace}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\LL}{{\ensuremath{LL(1)}}\xspace}
+\newcommand{\JAM}{{\ensuremath{\chi}}}
+\newcommand{\topbot}{\ensuremath{{\text{\normalfont \ttfamily \scalebox{2}[1]{I}}}}}
+\newcommand{\Fling}{F\textsc{ling}\xspace}
+\newcommand{\Yacc}{Y\textsc{acc}\xspace}
+\DeclareRobustCommand{\sf}[1]{{\ensuremath{\textsf{#1}}}}
+\DeclareRobustCommand{\tt}[1]{{\ensuremath{\texttt{#1}}}}
+\DeclareRobustCommand{\set}[1]{{%
+		\def\temp{#1}\ifx\temp\empty%
+		\ensuremath{\emptyset}
+		\else%
+		\ensuremath{\{#1\}}%
+		\fi	
+}}
+\newcommand{\Accept}{{\color{green}\emph{Accept}}}
+\newcommand{\Reject}{{\color{red}\emph{Reject}}}
+\def\<#1>{\langle\textit{#1}\rangle>}
+\def\s #1{\textsf{#1}}
+\def\z #1{\text{\textrm`\s{#1}\textrm'}}
+\def\eq#1{\cref{eq:#1}}
+\newcommand\term[1]{\emph{#1}}
+\newcommand\acronym[2][\relax]{\emph{\firstBold{#2}}~(#1)}
+\newcommand{\rulesepv}{\unskip{\color{black}\vrule}\hspace{.5cm}}
+\newcommand{\ruleseph}{\unskip\vspace{.25cm}{\color{black}\hrule}}
+\newcommand{\fname}[1]{\ensuremath{\textrm{\textup{\textsf{#1}}}}}
+\newcommand{\pars}[1][]{\ensuremath{\hspace{-.05cm}\texttt{(}#1\texttt{)}\xspace}}
+
+\newcommand{\encoding}[2]{e(#1,#2)}
+\newcommand{\child}[3]{\encoding{#1}{#2}[#3]}
+\newcommand{\inductive}[1]{\noindent{\sffamily\textbf{\color{light-grey} Inductive #1.}}\xspace}
+
+\newcommand\gobble[1]{}
+\def\<#1>{⟨\textit{#1}⟩\;}
+\def\|{|\;}
+
+\newcommand{\Java}{\textsc{Java}\xspace}
+\newcommand{\CC}{\textsc{C++}\xspace}
+\newcommand{\Datalog}{\textsc{Datalog}\xspace}
+\providecommand\cc[1]{\textcolor{Sepia}{\text{\textup{\textbf{\texttt{#1}}}}}}
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+	endorsed by the Artifact Evaluation Committee is available free of 
+	charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
 %This is a template for producing LIPIcs articles.
 %See lipics-manual.pdf for further information.
 %for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
@@ -13,10 +336,9 @@
 
 %\graphicspath{{./graphics/}}%helpful if your graphic files are in another directory
 
-% flatex input end: [00.bbl]
-%FLATEX-REM:\bibliographystyle{plainurl}% the mandatory bibstyle
+\bibliographystyle{plainurl}% the mandatory bibstyle
 
-\title{Fling---A Fluent API Generator (Artifact)}
+\title{Fling---A Fluent API Generator}
 
 % ARTIFACT: Authors may not be exactly the same as the related scholarly paper, e.g., you may want to include authors who contributed to the preparation of the artifact, but not to the companion paper
 
@@ -51,11 +373,11 @@
 	% flatex input: [abstract.tex]
 The first general and practical solution of the fluent API problem is
 presented. We give an algorithm that given a deterministic context free
-language (equivalently,~$\text{LR}(k)$,~$k≥0$ language) encodes it in an
+language (equivalently,~$\text{LR}(k)$,~$k\ge 0$ language) encodes it in an
 unbounded parametric polymorphism type system employing only a polynomial
 number of types. The theoretical result is employed in an actual tool
 \Fling---a fluent API compiler-compiler in the style of YACC, tailored for
-embedding DSLs in \NonCitingUse{Java}.
+embedding DSLs in \textsc{Java}.
 
 % flatex input end: [abstract.tex]
 
@@ -70,15 +392,7 @@ embedding DSLs in \NonCitingUse{Java}.
 Fluent APIs are often used a implement a domain specific language (DSL). In
 \cref{lst:re} we see an example of fluent API that specifies
 a regular expression.
-\begin{excerpt}[language=java,label={lst:re},caption={%
-    Fluent API specification of the regular expression
-~$
-    (ab?)^*\,|\,~$
-~$
-    \left([0-9][0-9]⁺\right)
-~$
-    }
-]
+\begin{excerpt}[language=java,label={lst:re},caption={Fluent API specification of the regular expression~$(ab?)^*\,|\,~$~$\left([0-9][0-9]^{+}\right)~$}]
 re().// this starts the fluent API chain here
 noneOrMore(exactly("a").and().option(exactly("b"))).//
 or().oneOrMore(anyDigit()).//
@@ -105,36 +419,35 @@ realize a fluent API for the given language. The formal language may specified i
     Automaton) including a definition of the set of stack symbols, automaton
     symbols, start symbol, transition function, and accepting symbols.
 
-    Consider for example, a DPDA for the language~$aⁿbⁿ$, $n>0$ in \cref{figure:anbn}. 
+    Consider for example, a DPDA for the language~$a^{n}b^{n}$, $n>0$ in \cref{figure:anbn}. 
 
 \begin{figure}
-    \caption{A DPDA for the language~$aⁿbⁿ$, $n>0$}
-    \label{figure:anbn} 
+    \caption{A DPDA for the language~$a^{n}b^{n}$, $n>0$}
+    \label{figure:anbn}
     \centering
-    % flatex input: [anbn.tikz]
-﻿\begin{tikzpicture}[node distance=3.5cm,auto,shorten >=1pt,auto]
+    \begin{tikzpicture}[node distance=3.5cm,auto,shorten >=1pt,auto]
 \tikzstyle{s}=[circle,fill=blue!20,inner sep=2pt]
-    \node[s,accepting,draw] (q₂) {$q₂$};
-    \node[s] (q₁)[ left of=q₂] {$q₁$};
-    \node[initial,s] (q₀)  [left of=q₁] {$q₀$};
+    \node[s,accepting,draw] (q2) {$q_{2}$};
+    \node[s] (q1)[ left of=q2] {$q_{1}$};
+    \node[initial,s] (q0)  [left of=q1] {$q_{0}$};
     \path[->]
-     (q₀) edge[loop above,thick] node {$
+     (q0) edge[loop above,thick] node {$
                  \begin{aligned}
-                   &\texttt a,X→XX
-                 \end{aligned}$} (q₀)
-     (q₀) edge[loop above,thick] node {$
+                   &\texttt a,X\rightarrow XX
+                 \end{aligned}$} (q0)
+     (q0) edge[loop above,thick] node {$
                  \begin{aligned}
-                   &\texttt a,X→XX
-                 \end{aligned}$} (q₀)
-   (q₁)edge[loop above,thick] node {
-      {$\texttt b,X→EX $} 
-   } (q₁)
-      (q₀)edge node {$\texttt b,X→EX$} (q₁)
+                   &\texttt a,X\rightarrow XX
+                 \end{aligned}$} (q0)
+   (q1)edge[loop above,thick] node {
+      {$\texttt b,X\rightarrow EX $} 
+   } (q1)
+      (q0)edge node {$\texttt b,X\rightarrow EX$} (q1)
 
-   (q₁) edge node {$
+   (q1) edge node {$
                  \begin{aligned}
-                   &\texttt b,X→\varepsilon 
-               \end{aligned}$} (q₂) 
+                   &\texttt b,X\rightarrow \varepsilon 
+               \end{aligned}$} (q2) 
       ;
 \end{tikzpicture}
 
@@ -150,18 +463,18 @@ each $a$ character that does not found a $b$ that matches it.
 \begin{excerpt}[language=java,label={lst:anbn},caption={%
     Fling specification, in a fluent API fashion, of the DPDA of \cref{figure:anbn}.}
 ]
-enum ¢$Σ$¢ implements Terminal {a, b } // Define the alphabet of input characters. 
-enum ¢$Γ$¢ implements Named { E, X }// Define the alphabet of stack symbols. 
+enum ¢$\Sigma$¢ implements Terminal {a, b } // Define the alphabet of input characters. 
+enum ¢$\Gamma$¢ implements Named { E, X }// Define the alphabet of stack symbols. 
 public static final DPDA<Named, Verb, Named> dpda = 
-  Grammar.cast(dpda(Q.class, ¢$Σ$¢.class, ¢$Γ$¢.class) // Boiler plate code
+  Grammar.cast(dpda(Q.class, ¢$\Sigma$¢.class, ¢$\Gamma$¢.class) // Boiler plate code
     .q0(q0) // Define the start state
     .F(q2)  // Define the accepting state
-    .¢$γ$¢0(E)  //  Define the initial stack symbol
-    .¢$δ$¢(q0, a, E, q0, E, X) // Transition for pushing the first $X$
-    .¢$δ$¢(q0, a, X, q0, X, X) // Transition for pushing additional $X$s
-    .¢$δ$¢(q0, b, X, q1) // Transition for consuming first $b$s
-    .¢$δ$¢(q1, b, X, q1) // Transition for consuming subsequent $b$s
-    .¢$δ$¢(q1, ¢$ε$¢(), E, q2) // Finish when bottom of the stack is reached
+    .¢$\gamma$¢0(E)  //  Define the initial stack symbol
+    .¢$\delta$¢(q0, a, E, q0, E, X) // Transition for pushing the first $X$
+    .¢$\delta$¢(q0, a, X, q0, X, X) // Transition for pushing additional $X$s
+    .¢$\delta$¢(q0, b, X, q1) // Transition for consuming first $b$s
+    .¢$\delta$¢(q1, b, X, q1) // Transition for consuming subsequent $b$s
+    .¢$\delta$¢(q1, ¢$\varepsilon$¢(), E, q2) // Finish when bottom of the stack is reached
     .go()); // Let the builder of the DPDA start its work. 
 \end{excerpt}
 
@@ -213,16 +526,16 @@ support unbounded polymorphism of classes, i.e., classes that may receive type
 parameters, but it is not required that the language allows constraints on
 these parameters, as found in e.g., ML.
 
-For example, let us use \Fling to create a \Java fluent API of \Datalog, and then
+For example, let us use \Fling to create a \Java~\cite{Arnold:Gosling:96} fluent API of \Datalog~\cite{Ceri:Gottlob:Tanca:90}, and then
 use it to define \Datalog programs and run them.
 A definition of a DSL by its grammar begins with definitions of the set of
-grammar terminals and non-terminals, as shown in \cref{lst:enums} (drawn from file
+grammar terminals and non-terminas, as shown in \cref{lst:enums} (drawn from file
 \texttt{Datalog.java} in the code).
 \begin{excerpt}[language=java,label={lst:enums},caption=
   {Terminals and non-terminals for \Datalog grammar}
 ]
 /** Set of terminals, i.e., method names of generated fluent API. */
-public enum ¢$Σ$¢ implements Terminal {
+public enum ¢$\Sigma$¢ implements Terminal {
   infer, fact, query, of, and, when, always, v, l
 }
 
@@ -293,7 +606,7 @@ Program program =
   infer("ancestor").of(v("A"), v("B")).
     when("parent").of(v("A"), v("C")).
     and("ancestor").of(v("C"), v("B")).
-  query("ancestor").of(l("john"), v("X")).¢﹩¢();
+  query("ancestor").of(l("john"), v("X")).¢\$¢();
 \end{excerpt}
 After calling \Fling with the \Datalog BNF as its input, we can use the generated
 fluent API to define \Datalog programs. The native \Datalog program shown in~\cref{lst:datalog:program}
@@ -324,7 +637,7 @@ public static class DatalogRunner extends DatalogAST.Visitor {
         getExprRightHandSide(withBody));
     print(withBody);
   }
-  //…
+  //¢\ldots¢
 }
 \end{excerpt}
 
@@ -374,7 +687,7 @@ The key packages and classes in \Fling are:
 		\begin{itemize}
       \item \tt{fling.adapters.JavaMediator}: integrate the generated API and
         AST to a \Java program.  Its input must be an~$LL(1)$ grammar.
-      \item \tt{fling.adapters.CppAPIAdapter}: compiles API to \CC code. Its
+      \item \tt{fling.adapters.CppAPIAdapter}: compiles API to \CC~\cite{Stroustrup:Book:97} code. Its
         input must be a DPDA.  The generated \CC fluent API supports method
         chains of the form~\mbox{$a()\rightarrow b().c().\ldots.\$()$\footnote{
 			this adapter is not very useful, yet demonstrates \Fling's potential to generate fluent API in various
@@ -410,7 +723,7 @@ T -> T * F | F
 F -> (E) | int
 	\end{excerpt*}
 	\Fling currently supports only~$LL(1)$ grammars, so this grammar should be
-	rewritten to fit the~$LL(1)$ class\footnote{explanation about~$LL(1)$ grammars is given here:~\href{https://andrewbegel.com/cs164/ll1.html}{https://andrewbegel.com/cs164/ll1.html}}:
+	rewritten to fit the~$LL(1)$ class\footnote{exlanation about~$LL(1)$ grammars is given here:~\href{https://andrewbegel.com/cs164/ll1.html}{https://andrewbegel.com/cs164/ll1.html}}:
 	\begin{excerpt*}
 E  -> T E'
 E' -> + T E' | ¢$\varepsilon$¢
@@ -423,7 +736,7 @@ F  -> (E) | int
 	\item \textbf{Encode the grammar in \Java:} Write your grammar in a \Java class
 	using \Fling's API.
 	First define the terminal and non-terminal symbols of your language in their respecting
-	\cc{enum}s: Keep in mind you are limited by \Java's naming rules, so replacements
+	\cc{enum}s: Keep in mind you are limitted by \Java's naming rules, so replacements
 	might be needed.
 	\begin{excerpt*}[language=java]
 import fling.*;
@@ -463,9 +776,9 @@ public static final BNF bnf = bnf(). // Start defining BNF
 	% Generate output files:
 	\item \textbf{Generate the fluent API}: Use a \cc{JavaModerator} to
 	create the fluent API classes. The moderator links together the various
-	compilers offered by \Fling, making the process manageable. The contents
+	compilers offered by \Fling, making the process handleable. The contents
 	of the fluent API classes are computed upon initialing the moderator, and
-	are available each in a class field: Thus writing the classes into the
+	are available each in a class field: Thus writting the classes into the
 	corresponding files is made easy.
 \begin{excerpt*}[language=java]
 import fling.adapters.JavaMediator;
@@ -473,14 +786,14 @@ import fling.adapters.JavaMediator;
 JavaMediator jm = new JavaMediator(bnf, // The grammar defined above
   "fling.examples.generated", // Output package name
   "SimpleArithmetic", // Output base class name
-  ¢$Σ$¢.class); // Class of terminal symbols
+  ¢$\Sigma$¢.class); // Class of terminal symbols
 // Write classes to filesystem:
 writeToFile("SimpleArithmetic", jm.apiClass);
 writeToFile("SimpleArithmeticAST", jm.astClass);
 writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
 \end{excerpt*}
 Here, class \cc{SimpleArithmetic} contains the fluent API interfaces
-declarations.  The declarations used for the AST generated at run-time are in
+declarations.  The declarations used for the AST generated at runtime are in
 \cc{SimpleArithmeticAST}.  
 The~$LL(1)$ run-time compiler used to create the ASTs of fluent API method
 chains is found in class \cc{SimpleArithmeticCompiler}
@@ -493,7 +806,7 @@ chains is found in class \cc{SimpleArithmeticCompiler}
   with which an arithmetic expression can start. In the present case, 
     these are \cc{begin} and \cc{i}.
   A fluent API call chain then starts with \cc{SimpleArithmetic.begin()} 
-  (or \cc{SimpleArithmetic.i($⋯$)}) and ends with a \cc{.\$()}. 
+  (or \cc{SimpleArithmetic.i($\cdots$)}) and ends with a \cc{.\$()}. 
   The value returned by the chain is the AST of the declared arithmetic expression.
 	Types of AST nodes are either non-abstract class or an interface:
 	\begin{itemize}
@@ -511,22 +824,22 @@ package fling.examples.languages;
 // Imports omitted for brevity
 public class SimpleArithmetic {
   // Terminal symbols:
-  public enum ¢$Σ$¢ implements Terminal {plus, mult, begin, end, i}
+  public enum ¢$\Sigma$¢ implements Terminal {plus, mult, begin, end, i}
   // Non-terminal symbols:
   public enum V implements Variable {E, E_, T, T_, F}
   public static final BNF bnf = bnf(). // Start defining BNF
     start(E). // Declare the start symbol
     derive(E).to(T, E_). // E ::= T E'
-    derive(E_).to(plus, T, E_).orNone(). // E' ::= + T E' | ¢$ε$¢
+    derive(E_).to(plus, T, E_).orNone(). // E' ::= + T E' | ¢$\varepsilon$¢
     derive(T).to(F, T_). // T ::= F T'
-    derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ¢$ε$¢
+    derive(T_).to(mult, F, T_).orNone(). // T' ::= * F T' | ¢$\varepsilon$¢
     derive(F).to(begin, E, end).or(i.with(Integer.class)). // F ::= (E) | int
     build(); // Yield BNF
   public static void main(String[] args) {
     JavaMediator jm = new JavaMediator(bnf, // Grammar definition
       "fling.examples.generated", // Output package name
       "SimpleArithmetic", // Output base class name
-      ¢$Σ$¢.class); // Class of terminal symbols
+      ¢$\Sigma$¢.class); // Class of terminal symbols
     writeToFile("SimpleArithmetic", jm.apiClass);
     writeToFile("SimpleArithmeticAST", jm.astClass);
     writeToFile("SimpleArithmeticCompiler", jm.astCompilerClass);
@@ -653,27 +966,7 @@ depicted above.
 % ARTIFACT: optional appendix
 \appendix
 
-%*flatex input: [00.bbl]
-\begin{thebibliography}{1}
-
-\bibitem{Arnold:Gosling:96}
-Ken Arnold and James Gosling.
-\newblock {\em The \textsc{Java} Programming Language}.
-\newblock Addison Wesley, 1996.
-
-\bibitem{Ceri:Gottlob:Tanca:90}
-Stefano Ceri, Georg Gottlob, and Letizia Tanca.
-\newblock {\em Logic programming and databases}.
-\newblock SVNY, 1990.
-
-\bibitem{Stroustrup:Book:97}
-Bjarne Stroustrup.
-\newblock {\em The C++ programming language}.
-\newblock Pearson Education India, 2000.
-
-\end{thebibliography}
-
-%FLATEX-REM:\bibliography{00,author-names,publishers,big}
+\bibliography{p12-roth}
 
 \end{document}
 
