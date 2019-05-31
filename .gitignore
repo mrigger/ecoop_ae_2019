@@ -1,4 +1,11 @@
+*.blg
+*.bbl
 *.pdf
 *.log
 *.out
 *.aux
+/*/*.vtc
+!orcid.pdf
+!darts-v2019.cls
+!darts-logo-bw.pdf
+!cc-by.pdf
