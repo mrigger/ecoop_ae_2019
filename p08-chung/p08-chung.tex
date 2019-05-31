@@ -1,0 +1,100 @@
+\documentclass{darts-v2019}
+\title{On Julia’s efficient algorithm for subtyping union types and covariant tuples (Artifact)}
+
+\Volume{5}
+\Issue{2}
+\Article{8}
+\RelatedConference{33rd European Conference on Object-Oriented Programming (ECOOP 2019), July 15--19, 2019, London, United Kingdom}
+
+\newenvironment{scope}{\section{Scope}}{}
+\newenvironment{content}{\section{Content}}{}
+\newenvironment{getting}{\section{Getting the artifact} The artifact 
+endorsed by the Artifact Evaluation Committee is available free of 
+charge on the Dagstuhl Research Online Publication Server (DROPS).}{}
+\newenvironment{platforms}{\section{Tested platforms}}{}
+\newcommand{\license}[1]{{\section{License}#1}}
+\newcommand{\mdsum}[1]{{\section{MD5 sum of the artifact}#1}}
+\newcommand{\artifactsize}[1]{{\section{Size of the artifact}#1}}
+
+\author{Benjamin Chung}{Northeastern University}{bchung@ccs.neu.edu}{}{}
+\author{Francesco Zappa Nardelli}{Inria}{francesco.zappa\_nardelli@inria.fr}{}{}
+\author{Jan Vitek}{Northeastern University \and Czech Technical University in Prague}{j.vitek@neu.edu}{}{}
+\authorrunning{B.\,Chung\, F.\,Zappa Nardelli and J.\,Vitek}
+
+\Copyright{Benjamin W. Chung, Francesco Zappa Nardelli, and Jan Vitek}
+
+\ccsdesc[500]{Theory of computation~Type theory}
+\ccsdesc[300]{Software and its engineering~General programming languages}
+
+\keywords{Type systems, subtyping, algorithmic type systems, distributive unions}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+This is the artifact for the pearl paper "On Julia’s efficient algorithm for subtyping union types and covariant tuples." It consists of two primary components:
+
+\begin{itemize}
+\item \texttt{index.html}: An implementation of the subtyping algorithm running in a webpage. This implementation is modified only slightly from the one described in the paper to enable visualization. For sources, see the \texttt{web-impl} directory.
+\item \texttt{julia-iterators.v}: The Coq source code for the proofs referenced in our paper.
+\end{itemize}
+
+This document is a worse-formatted and non-executable version of
+\texttt{index.html}. We suggest the the online version (at
+https://benchung.github.io/subtype-artifact/) or simply open
+\texttt{index.html} from the artifact archive for information on the artifact
+and to try out our algorithm. The website version of the artifact is tested to
+work in Google Chrome, and should work in all modern browsers.
+
+\section{Proof}
+
+The proof script (found in \texttt{proof/julia-iterators.v}) depends on Coq 8.9.0. A detailed description of our 
+proof can be found in section 3 of the paper. 
+The proof is standalone, and has no library dependencies. 
+
+It relies on the standard library provided axiom \verb|Eqdep.Eq_rect_eq.eq_rect_eq|, which establishes the invariance
+under substitution of dependent equality. In our formalization, structural type
+iterators are dependent upon the type over which they iterate. We rely on this
+axiom to decide when two iterators are iterating over the same or different types.
+It is an axiom in our system as it is independent of the calculus of constructions.
+
+\section{Implementation}
+
+We include a web implementation of our algorithm. To use it, please see \texttt{index.html} for
+the running implementation and instructions on its use and compilation.
+
+\subsection{Compiling the Implementation}
+
+The implementation is written in OCaml and compiled using js\_of\_ocaml. It requires:
+\begin{itemize}
+\item OCaml 4.07.0 or later
+\item opam 2.0.4 or later
+\end{itemize}
+
+To compile the OCaml to Javascript, run
+
+\begin{verbatim}
+make deps
+make
+\end{verbatim}
+
+in the \texttt{web-impl} subdirectory, which should update the file \texttt{web-impl/js/subtype.js}.
+
+\section{License}
+
+Copyright 2019 Benjamin Chung, Francesco Zappa Nardelli, Jan Vitek
+
+The artifact associated with this description is licensed under the Apache
+License, Version 2.0 (the "License"); you may not use the associated artifact
+except in compliance with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+\end{document}
